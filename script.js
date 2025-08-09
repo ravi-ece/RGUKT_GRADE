@@ -180,14 +180,30 @@ loadSubjectsBtn.addEventListener('click', () => {
 function populateSubjects(subjects, branch, key) {
   // Add 'Modify Subjects' button at the bottom
   let modifyBtn = document.getElementById('modifySubjectsBtn');
+  let rkLabel = document.getElementById('rkLabel');
   if (!modifyBtn) {
+    // Create container for button and label
+    let container = document.createElement('div');
+    container.id = 'modifyBtnContainer';
+  container.className = 'fixed bottom-4 right-4 z-50 flex flex-row items-center gap-2 sm:gap-3';
+    // Create RK label
+    rkLabel = document.createElement('span');
+    rkLabel.id = 'rkLabel';
+    rkLabel.textContent = 'Developed by RK';
+    rkLabel.className = 'px-4 py-2 rounded-xl bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold shadow-lg text-base';
+    // Create button
     modifyBtn = document.createElement('button');
     modifyBtn.id = 'modifySubjectsBtn';
     modifyBtn.textContent = 'Modify Subjects';
-    modifyBtn.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg z-50';
-    document.body.appendChild(modifyBtn);
+    modifyBtn.className = 'px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg';
+    // Add to container
+    container.appendChild(rkLabel);
+    container.appendChild(modifyBtn);
+    document.body.appendChild(container);
   }
-  modifyBtn.style.display = 'block';
+  // Ensure both are visible
+  modifyBtn.style.display = 'inline-block';
+  if (rkLabel) rkLabel.style.display = 'inline-block';
   modifyBtn.onclick = function() {
     // Remove all subjects from view and show modal for selection
     subjectsContainer.innerHTML = '';
@@ -325,15 +341,35 @@ function populateSubjects(subjects, branch, key) {
         default: 'bg-white dark:bg-slate-900'
       };
       row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
+      // Improve dark mode contrast
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.classList.contains('dark')) {
+        row.style.backgroundColor = 'rgba(30,41,59,0.98)'; // dark slate
+        row.style.borderColor = '#334155';
+      } else {
+        row.style.backgroundColor = '';
+        row.style.borderColor = '';
+      }
+      // Branch theme colors for dropdown
+      const branchSelectBg = {
+        cse: 'bg-red-600',
+        ece: 'bg-blue-600',
+        eee: 'bg-orange-500',
+        civil: 'bg-yellow-400',
+        mech: 'bg-violet-600',
+        mme: 'bg-pink-500',
+        chem: 'bg-teal-600',
+        puc: 'bg-green-600',
+        default: 'bg-blue-600'
+      };
       row.innerHTML = `
         <div class="mb-1">
-          <div class="font-bold text-lg text-blue-900 dark:text-blue-200">${escapeHtml(s.name || s.name)}</div>
-          <div class="text-xs text-gray-700 dark:text-gray-300">${s.code || ''}</div>
+          <div class="font-bold text-lg ${document.documentElement.classList.contains('dark') ? 'text-blue-200' : 'text-blue-900'}">${escapeHtml(s.name || s.name)}</div>
+          <div class="text-xs ${document.documentElement.classList.contains('dark') ? 'text-gray-300' : 'text-gray-700'}">${s.code || ''}</div>
         </div>
-        <div class="mb-1 text-base text-gray-900 dark:text-gray-200">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
+        <div class="mb-1 text-base ${document.documentElement.classList.contains('dark') ? 'text-gray-200' : 'text-gray-900'}">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
         <div class="w-full">
           <label class="sr-only">Grade</label>
-          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 bg-blue-600 text-white text-center font-bold">
+          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 ${branchSelectBg[branch] || branchSelectBg.default} text-white text-center font-bold" style="${document.documentElement.classList.contains('dark') ? 'background-color:#334155;' : ''}">
             ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
           </select>
         </div>
