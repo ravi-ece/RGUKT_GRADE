@@ -55,21 +55,13 @@ const sgpaDisplay = document.getElementById('sgpaDisplay');
 const classAward = document.getElementById('classAward');
 const branchTag = document.getElementById('branchTag');
 const downloadBtn = document.getElementById('downloadBtn');
-const themeToggle = document.getElementById('themeToggle');
+// Removed themeToggle
 
 /* -------------------------
    Theme toggle
    ------------------------- */
 function setDarkMode(on) {
-  if (on) document.documentElement.classList.add('dark');
-  else document.documentElement.classList.remove('dark');
-  themeToggle.textContent = on ? 'Light Mode' : 'Dark Mode';
-}
-themeToggle.addEventListener('click', () => {
-  const isDark = document.documentElement.classList.toggle('dark');
-  themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-});
-themeToggle.textContent = 'Dark Mode';
+// Removed dark/light mode toggle logic
 
 /* -------------------------
    Program select handler
@@ -78,7 +70,7 @@ programSelect.addEventListener('change', () => {
   const v = programSelect.value;
   pucOptions.classList.toggle('hidden', v !== 'puc');
   btechOptions.classList.toggle('hidden', v !== 'btech');
-});
+  // Removed closing bracket from theme toggle logic
 
 /* -------------------------
    Build key for subjectsMap lookups
@@ -180,30 +172,29 @@ loadSubjectsBtn.addEventListener('click', () => {
 function populateSubjects(subjects, branch, key) {
   // Add 'Modify Subjects' button at the bottom
   let modifyBtn = document.getElementById('modifySubjectsBtn');
-  let rkLabel = document.getElementById('rkLabel');
-  if (!modifyBtn) {
-    // Create container for button and label
-    let container = document.createElement('div');
-    container.id = 'modifyBtnContainer';
-  container.className = 'fixed bottom-4 right-4 z-50 flex flex-row items-center gap-2 sm:gap-3';
-    // Create RK label
-    rkLabel = document.createElement('span');
+  // Remove floating button and label, add to footer
+  let footer = document.getElementById('footerRK');
+  if (!footer) {
+    footer = document.createElement('div');
+    footer.id = 'footerRK';
+    footer.className = 'flex justify-center items-center gap-4 mt-4';
+    let rkLabel = document.createElement('span');
     rkLabel.id = 'rkLabel';
     rkLabel.textContent = 'Developed by RK';
     rkLabel.className = 'px-4 py-2 rounded-xl bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold shadow-lg text-base';
-    // Create button
-    modifyBtn = document.createElement('button');
+    let modifyBtn = document.createElement('button');
     modifyBtn.id = 'modifySubjectsBtn';
     modifyBtn.textContent = 'Modify Subjects';
     modifyBtn.className = 'px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg';
-    // Add to container
-    container.appendChild(rkLabel);
-    container.appendChild(modifyBtn);
-    document.body.appendChild(container);
+    footer.appendChild(rkLabel);
+    footer.appendChild(modifyBtn);
+    // Add to footer
+    let mainFooter = document.querySelector('footer');
+    if (mainFooter) mainFooter.appendChild(footer);
+    else document.body.appendChild(footer);
+  } else {
+    footer.style.display = 'flex';
   }
-  // Ensure both are visible
-  modifyBtn.style.display = 'inline-block';
-  if (rkLabel) rkLabel.style.display = 'inline-block';
   modifyBtn.onclick = function() {
     // Remove all subjects from view and show modal for selection
     subjectsContainer.innerHTML = '';
