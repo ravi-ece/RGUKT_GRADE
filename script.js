@@ -1,3 +1,33 @@
+// Floating Modify Subjects button handler
+document.getElementById('modifySubjectsBtnFloating')?.addEventListener('click', () => {
+  alert('Modify Subjects: This button allows you to add, remove, or change subjects for your selected semester. Use it to customize your subject list before calculating SGPA.');
+  // Show the modify subjects modal
+  let modal = document.getElementById('modifyModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modifyModal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/40';
+    modal.innerHTML = `<div class="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-2xl">
+      <h2 class="text-xl font-bold mb-4">Modify Subjects</h2>
+      <div id="subjectList" class="mb-4"></div>
+      <button id="addSubjectBtn" class="w-full py-2 rounded-lg bg-green-600 text-white font-bold mb-2">Add New Subject</button>
+      <button id="closeModifyBtn" class="w-full py-2 rounded-lg bg-gray-400 text-white font-bold">Done</button>
+    </div>`;
+    document.body.appendChild(modal);
+  } else {
+    modal.style.display = 'flex';
+  }
+  // Render subjects as removable items
+  function renderSubjectList() {
+    const subjectList = modal.querySelector('#subjectList');
+    subjectList.innerHTML = '';
+    // ...existing code to render subjects...
+  }
+  renderSubjectList();
+  modal.querySelector('#closeModifyBtn').onclick = () => {
+    modal.style.display = 'none';
+  };
+});
 // script.js
 // Make sure all_subjects_combined.js is in the same folder and loaded before this file.
 
@@ -204,7 +234,7 @@ function populateSubjects(subjects, branch, key) {
   // Ensure both are visible
   modifyBtn.style.display = 'inline-block';
   if (rkLabel) rkLabel.style.display = 'inline-block';
-    modifyBtn.addEventListener('click', () => {
+  modifyBtn.onclick = function() {
     // Remove all subjects from view and show modal for selection
     subjectsContainer.innerHTML = '';
     let modal = document.getElementById('modifyModal');
@@ -239,68 +269,182 @@ function populateSubjects(subjects, branch, key) {
       });
     }
     renderSubjectList();
-    // Removed creation and display of floating 'Developed by RK' and 'Modify Subjects' buttons. Only footer button remains and is functional.
-  }
-  // ...existing code...
-
-  // Render subjects UI
-  subjects.forEach((s) => {
-    const row = document.createElement('div');
-    let branchBg = {
-      cse: 'bg-red-50 dark:bg-red-900',
-      ece: 'bg-blue-50 dark:bg-blue-900',
-      eee: 'bg-orange-50 dark:bg-orange-900',
-      civil: 'bg-yellow-50 dark:bg-yellow-900',
-      mech: 'bg-violet-50 dark:bg-violet-900',
-      mme: 'bg-pink-50 dark:bg-pink-900',
-      chem: 'bg-teal-50 dark:bg-teal-900',
-      puc: 'bg-green-50 dark:bg-green-900',
-      default: 'bg-white dark:bg-slate-900'
+    // Add subject logic
+    modal.querySelector('#addSubjectBtn').onclick = function() {
+      let name = prompt('Enter subject name:');
+      let credits = prompt('Enter subject credits:');
+      if (!name || !credits) return alert('Name and credits required.');
+      // Default code template per branch
+      let codeTemplates = {
+        cse: '23CSXXXX',
+        ece: '23ECXXXX',
+        eee: '23EEXXXX',
+        civil: '23CEXXXX',
+        mech: '23MEXXXX',
+        mme: '23MMXXXX',
+        chem: '23CHXXXX',
+        puc: '23PUCXXXX',
+        default: '23SUBXXXX'
+      };
+      let code = codeTemplates[branch] || codeTemplates.default;
+      subjects.push({ name, code, credits: parseFloat(credits) });
+      renderSubjectList();
+      populateSubjects(subjects, branch, key);
     };
-    row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
-    // Improve dark mode contrast
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.classList.contains('dark')) {
-      row.style.backgroundColor = 'rgba(30,41,59,0.98)'; // dark slate
-      row.style.borderColor = '#334155';
-    } else {
-      row.style.backgroundColor = '';
-      row.style.borderColor = '';
-    }
-    // Branch theme colors for dropdown
-    const branchSelectBg = {
-      cse: 'bg-red-600',
-      ece: 'bg-blue-600',
-      eee: 'bg-orange-500',
-      civil: 'bg-yellow-400',
-      mech: 'bg-violet-600',
-      mme: 'bg-pink-500',
-      chem: 'bg-teal-600',
-      puc: 'bg-green-600',
-      default: 'bg-blue-600'
+    // Close modal
+    modal.querySelector('#closeModifyBtn').onclick = function() {
+      modal.style.display = 'none';
+      populateSubjects(subjects, branch, key);
     };
-    row.innerHTML = `
-      <div class="mb-1">
-        <div class="font-bold text-lg ${document.documentElement.classList.contains('dark') ? 'text-blue-200' : 'text-blue-900'}">${escapeHtml(s.name || s.name)}</div>
-        <div class="text-xs ${document.documentElement.classList.contains('dark') ? 'text-gray-300' : 'text-gray-700'}">${s.code || ''}</div>
-      </div>
-      <div class="mb-1 text-base ${document.documentElement.classList.contains('dark') ? 'text-gray-200' : 'text-gray-900'}">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
-      <div class="w-full">
-        <label class="sr-only">Grade</label>
-        <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 ${branchSelectBg[branch] || branchSelectBg.default} text-white text-center font-bold" style="${document.documentElement.classList.contains('dark') ? 'background-color:#334155;' : ''}">
-          ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
-        </select>
-      </div>
-    `;
-    subjectsContainer.appendChild(row);
+  };
+  // Update select dropdowns to match branch theme
+  const selects = document.querySelectorAll('select');
+  selects.forEach(sel => {
+    sel.classList.remove('cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme');
+    sel.classList.add(`${branch}-theme`);
   });
+  // Update branch heading at top
+  const branchHeading = document.getElementById('branchHeading');
+  if (branchHeading) {
+    let branchName = branchThemes[branch]?.name || branch.toUpperCase();
+    branchHeading.textContent = `Branch: ${branchName}`;
+    branchHeading.className = `text-lg font-semibold mt-2 mb-1 text-center branch-tag ${branch}-theme`;
+  }
+  // Change whole web background theme based on branch
+  document.body.classList.remove(
+    'cse-bg','ece-bg','eee-bg','civil-bg','mech-bg','mme-bg','chem-bg','puc-bg','default-bg'
+  );
+  switch(branch) {
+    case 'cse': document.body.classList.add('cse-bg'); break;
+    case 'ece': document.body.classList.add('ece-bg'); break;
+    case 'eee': document.body.classList.add('eee-bg'); break;
+    case 'civil': document.body.classList.add('civil-bg'); break;
+    case 'mech': document.body.classList.add('mech-bg'); break;
+    case 'mme': document.body.classList.add('mme-bg'); break;
+    case 'chem': document.body.classList.add('chem-bg'); break;
+    case 'puc': document.body.classList.add('puc-bg'); break;
+    default: document.body.classList.add('default-bg'); break;
+  }
+  // PAGINATION LOGIC
+  const pageSize = subjects.length;
+  let currentPage = 1;
+  let totalPages = Math.ceil(subjects.length / pageSize);
+  const paginationControls = document.getElementById('paginationControls');
+  const prevPageBtn = document.getElementById('prevPageBtn');
+  const nextPageBtn = document.getElementById('nextPageBtn');
+  const pageInfo = document.getElementById('pageInfo');
 
-  // show hint
-  const help = document.createElement('div');
-  help.className = 'mt-3 text-sm text-slate-500';
-  help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
-  subjectsContainer.appendChild(help);
+  function renderPage(page) {
+    subjectsContainer.innerHTML = '';
+    branchTag.classList.remove('hidden');
+    branchTag.textContent = (branchThemes[branch] && branchThemes[branch].tag) ? branchThemes[branch].tag : branch.toUpperCase();
+    branchTag.className = 'px-3 py-1 rounded-full text-sm font-medium branch-tag';
+    branchTag.classList.remove(
+      'cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme'
+    );
+    switch(branch) {
+      case 'cse': branchTag.classList.add('cse-theme'); break;
+      case 'ece': branchTag.classList.add('ece-theme'); break;
+      case 'eee': branchTag.classList.add('eee-theme'); break;
+      case 'civil': branchTag.classList.add('civil-theme'); break;
+      case 'mech': branchTag.classList.add('mech-theme'); break;
+      case 'mme': branchTag.classList.add('mme-theme'); break;
+      case 'chem': branchTag.classList.add('chem-theme'); break;
+      case 'puc': branchTag.classList.add('puc-theme'); break;
+      default: branchTag.classList.add('default-theme'); break;
+    }
+    // Render only subjects for current page
+    const startIdx = (page - 1) * pageSize;
+    const endIdx = Math.min(startIdx + pageSize, subjects.length);
+    for (let idx = startIdx; idx < endIdx; idx++) {
+      const s = subjects[idx];
+      const row = document.createElement('div');
+      let branchBg = {
+        cse: 'bg-red-50 dark:bg-red-900',
+        ece: 'bg-blue-50 dark:bg-blue-900',
+        eee: 'bg-orange-50 dark:bg-orange-900',
+        civil: 'bg-yellow-50 dark:bg-yellow-900',
+        mech: 'bg-violet-50 dark:bg-violet-900',
+        mme: 'bg-pink-50 dark:bg-pink-900',
+        chem: 'bg-teal-50 dark:bg-teal-900',
+        puc: 'bg-green-50 dark:bg-green-900',
+        default: 'bg-white dark:bg-slate-900'
+      };
+      row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
+      // Improve dark mode contrast
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.classList.contains('dark')) {
+        row.style.backgroundColor = 'rgba(30,41,59,0.98)'; // dark slate
+        row.style.borderColor = '#334155';
+      } else {
+        row.style.backgroundColor = '';
+        row.style.borderColor = '';
+      }
+      // Branch theme colors for dropdown
+      const branchSelectBg = {
+        cse: 'bg-red-600',
+        ece: 'bg-blue-600',
+        eee: 'bg-orange-500',
+        civil: 'bg-yellow-400',
+        mech: 'bg-violet-600',
+        mme: 'bg-pink-500',
+        chem: 'bg-teal-600',
+        puc: 'bg-green-600',
+        default: 'bg-blue-600'
+      };
+      row.innerHTML = `
+        <div class="mb-1">
+          <div class="font-bold text-lg ${document.documentElement.classList.contains('dark') ? 'text-blue-200' : 'text-blue-900'}">${escapeHtml(s.name || s.name)}</div>
+          <div class="text-xs ${document.documentElement.classList.contains('dark') ? 'text-gray-300' : 'text-gray-700'}">${s.code || ''}</div>
+        </div>
+        <div class="mb-1 text-base ${document.documentElement.classList.contains('dark') ? 'text-gray-200' : 'text-gray-900'}">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
+        <div class="w-full">
+          <label class="sr-only">Grade</label>
+          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 ${branchSelectBg[branch] || branchSelectBg.default} text-white text-center font-bold" style="${document.documentElement.classList.contains('dark') ? 'background-color:#334155;' : ''}">
+            ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
+          </select>
+        </div>
+      `;
+      subjectsContainer.appendChild(row);
+    }
+    // show hint
+    const help = document.createElement('div');
+    help.className = 'mt-3 text-sm text-slate-500';
+    help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
+    subjectsContainer.appendChild(help);
+    // Update pagination controls
+    if (totalPages > 1) {
+      paginationControls.classList.remove('hidden');
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages;
+    } else {
+      paginationControls.classList.add('hidden');
+    }
+  // Ensure modify button is visible
+  let modifyBtn = document.getElementById('modifySubjectsBtn');
+  if (modifyBtn) modifyBtn.style.display = 'block';
+    // Ensure subjectsContainer is always visible and not covered by overlays
+    subjectsContainer.style.display = 'block';
+    subjectsContainer.style.visibility = 'visible';
+  }
 
-  // ...existing code for pagination and visibility...
+  // Event listeners for pagination
+  if (prevPageBtn && nextPageBtn) {
+    prevPageBtn.onclick = function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    };
+    nextPageBtn.onclick = function() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage(currentPage);
+      }
+    };
+  }
+  // Initial render
+  renderPage(currentPage);
 }
 
 /* -------------------------
@@ -392,6 +536,12 @@ function flashFail() {
 downloadBtn.addEventListener('click', async () => {
   const subjectsEl = document.getElementById('subjectsSection');
   if (!subjectsEl) return alert('Nothing to download.');
+
+  // Check jsPDF loaded
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('PDF download failed: jsPDF library is not loaded. Please check your internet connection or contact admin.');
+    return;
+  }
 
   // Removed prompts for student name and ID
 
