@@ -111,12 +111,9 @@ function clearSubjects() {
 }
 
 loadSubjectsBtn.addEventListener('click', () => {
-  showLoading(true);
+  // Removed loading animation
   clearSubjects();
-  let loadingTimeout = setTimeout(() => {
-    showLoading(false);
-    subjectsContainer.innerHTML = `<div class='text-center text-rose-500 font-bold mt-8'>Loading is taking too long. Please check your internet connection or try again later.</div>`;
-  }, 5000); // 5 seconds
+  // Removed loading timeout and animation
   const program = programSelect.value;
   if (!program) {
     alert('Choose PUC or BTECH first.');
@@ -135,10 +132,8 @@ loadSubjectsBtn.addEventListener('click', () => {
     const key = `${year}-${sem}`;
     let subjects = (subjectsMap['puc'] && subjectsMap['puc'][key]) ? subjectsMap['puc'][key] : null;
     if (!subjects) {
-      clearTimeout(loadingTimeout);
-      subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${key}. Make sure your all_subjects_combined.js includes PUC keys.</p>`;
-      showLoading(false);
-      return;
+  subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${key}. Make sure your all_subjects_combined.js includes PUC keys.</p>`;
+  return;
     }
     if (stream === 'MPC') {
       subjects = subjects.filter(sub => !/biology/i.test(sub.name) && !/biology/i.test(sub.subcode));
@@ -162,9 +157,7 @@ loadSubjectsBtn.addEventListener('click', () => {
         finishBranchLoad();
       };
       script.onerror = function() {
-        clearTimeout(loadingTimeout);
-        subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Failed to load ${branchFile}. Please check your internet connection or contact admin.</p>`;
-        showLoading(false);
+  subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Failed to load ${branchFile}. Please check your internet connection or contact admin.</p>`;
       };
       document.body.appendChild(script);
     } else {
@@ -173,14 +166,10 @@ loadSubjectsBtn.addEventListener('click', () => {
     function finishBranchLoad() {
       const subjects = (subjectsMap[branch] && subjectsMap[branch][key]) ? subjectsMap[branch][key] : null;
       if (!subjects) {
-        clearTimeout(loadingTimeout);
-        subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${branch} ${key}. Make sure ${branch}Subjects.js supports this branch/semester.</p>`;
-        showLoading(false);
-        return;
+    subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${branch} ${key}. Make sure ${branch}Subjects.js supports this branch/semester.</p>`;
+    return;
       }
-      populateSubjects(subjects, branch, key);
-      clearTimeout(loadingTimeout);
-      showLoading(false);
+  populateSubjects(subjects, branch, key);
     }
   }
 });
