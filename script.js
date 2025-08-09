@@ -28,10 +28,8 @@ const gradeList = ['EX','A','B','C','D','E','F'];
 function buildSubjectsMap() {
   // Now we load only PUC data at start, branches are loaded dynamically
   const map = {};
-  if (typeof window.subjectsData !== 'undefined') {
-    if (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"]) {
-      map['puc'] = window.subjectsData;
-    }
+  if (typeof window.pucSubjects !== 'undefined') {
+    map['puc'] = window.pucSubjects;
   }
   return map;
 }
@@ -71,8 +69,19 @@ programSelect.addEventListener('change', () => {
   const v = programSelect.value;
   pucOptions.classList.add('hidden');
   btechOptions.classList.add('hidden');
-  if (v === 'puc') pucOptions.classList.remove('hidden');
-  if (v === 'btech') btechOptions.classList.remove('hidden');
+  if (v === 'puc') {
+    pucOptions.classList.remove('hidden');
+  }
+  if (v === 'btech') {
+    btechOptions.classList.remove('hidden');
+    // Ensure selects are enabled and visible
+    if (!branchSelect) console.error('branchSelect not found');
+    if (!yearSelect) console.error('yearSelect not found');
+    if (!btechSem) console.error('btechSem not found');
+    if (branchSelect) branchSelect.disabled = false;
+    if (yearSelect) yearSelect.disabled = false;
+    if (btechSem) btechSem.disabled = false;
+  }
 }); // <-- Added missing closing bracket for event listener
 
 /* -------------------------
