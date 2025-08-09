@@ -178,6 +178,79 @@ loadSubjectsBtn.addEventListener('click', () => {
    Populate subjects & grade dropdowns
    ------------------------- */
 function populateSubjects(subjects, branch, key) {
+  // Add 'Modify Subjects' button at the bottom
+  let modifyBtn = document.getElementById('modifySubjectsBtn');
+  if (!modifyBtn) {
+    modifyBtn = document.createElement('button');
+    modifyBtn.id = 'modifySubjectsBtn';
+    modifyBtn.textContent = 'Modify Subjects';
+    modifyBtn.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg z-50';
+    document.body.appendChild(modifyBtn);
+  }
+  modifyBtn.style.display = 'block';
+  modifyBtn.onclick = function() {
+    // Remove all subjects from view and show modal for selection
+    subjectsContainer.innerHTML = '';
+    let modal = document.getElementById('modifyModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modifyModal';
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/40';
+      modal.innerHTML = `<div class="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-2xl">
+        <h2 class="text-xl font-bold mb-4">Modify Subjects</h2>
+        <div id="subjectList" class="mb-4"></div>
+        <button id="addSubjectBtn" class="w-full py-2 rounded-lg bg-green-600 text-white font-bold mb-2">Add New Subject</button>
+        <button id="closeModifyBtn" class="w-full py-2 rounded-lg bg-gray-400 text-white font-bold">Done</button>
+      </div>`;
+      document.body.appendChild(modal);
+    } else {
+      modal.style.display = 'flex';
+    }
+    // Render subjects as removable items
+    function renderSubjectList() {
+      const subjectList = modal.querySelector('#subjectList');
+      subjectList.innerHTML = '';
+      subjects.forEach((sub, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex justify-between items-center mb-2 p-2 rounded bg-gray-100 dark:bg-slate-800';
+        item.innerHTML = `<span class="font-medium">${sub.name} <span class="text-xs text-gray-500">(${sub.code})</span></span><button class="px-2 py-1 rounded bg-red-500 text-white text-xs font-bold">Remove</button>`;
+        item.querySelector('button').onclick = function() {
+          subjects.splice(idx, 1);
+          renderSubjectList();
+          populateSubjects(subjects, branch, key);
+        };
+        subjectList.appendChild(item);
+      });
+    }
+    renderSubjectList();
+    // Add subject logic
+    modal.querySelector('#addSubjectBtn').onclick = function() {
+      let name = prompt('Enter subject name:');
+      let credits = prompt('Enter subject credits:');
+      if (!name || !credits) return alert('Name and credits required.');
+      // Default code template per branch
+      let codeTemplates = {
+        cse: '23CSXXXX',
+        ece: '23ECXXXX',
+        eee: '23EEXXXX',
+        civil: '23CEXXXX',
+        mech: '23MEXXXX',
+        mme: '23MMXXXX',
+        chem: '23CHXXXX',
+        puc: '23PUCXXXX',
+        default: '23SUBXXXX'
+      };
+      let code = codeTemplates[branch] || codeTemplates.default;
+      subjects.push({ name, code, credits: parseFloat(credits) });
+      renderSubjectList();
+      populateSubjects(subjects, branch, key);
+    };
+    // Close modal
+    modal.querySelector('#closeModifyBtn').onclick = function() {
+      modal.style.display = 'none';
+      populateSubjects(subjects, branch, key);
+    };
+  };
   // Update select dropdowns to match branch theme
   const selects = document.querySelectorAll('select');
   selects.forEach(sel => {
@@ -240,7 +313,18 @@ function populateSubjects(subjects, branch, key) {
     for (let idx = startIdx; idx < endIdx; idx++) {
       const s = subjects[idx];
       const row = document.createElement('div');
-      row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} bg-white dark:bg-slate-900 mb-4 shadow-md`;
+      let branchBg = {
+        cse: 'bg-red-50 dark:bg-red-900',
+        ece: 'bg-blue-50 dark:bg-blue-900',
+        eee: 'bg-orange-50 dark:bg-orange-900',
+        civil: 'bg-yellow-50 dark:bg-yellow-900',
+        mech: 'bg-violet-50 dark:bg-violet-900',
+        mme: 'bg-pink-50 dark:bg-pink-900',
+        chem: 'bg-teal-50 dark:bg-teal-900',
+        puc: 'bg-green-50 dark:bg-green-900',
+        default: 'bg-white dark:bg-slate-900'
+      };
+      row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
       row.innerHTML = `
         <div class="mb-1">
           <div class="font-bold text-lg text-blue-900 dark:text-blue-200">${escapeHtml(s.name || s.name)}</div>
@@ -270,6 +354,9 @@ function populateSubjects(subjects, branch, key) {
     } else {
       paginationControls.classList.add('hidden');
     }
+  // Ensure modify button is visible
+  let modifyBtn = document.getElementById('modifySubjectsBtn');
+  if (modifyBtn) modifyBtn.style.display = 'block';
     // Ensure subjectsContainer is always visible and not covered by overlays
     subjectsContainer.style.display = 'block';
     subjectsContainer.style.visibility = 'visible';
@@ -384,11 +471,7 @@ downloadBtn.addEventListener('click', async () => {
   const subjectsEl = document.getElementById('subjectsSection');
   if (!subjectsEl) return alert('Nothing to download.');
 
-  // Prompt for student name and ID
-  let studentName = prompt('Enter your name for the report:');
-  if (!studentName) return alert('Name is required.');
-  let studentId = prompt('Enter your ID number for the report:');
-  if (!studentId) return alert('ID number is required.');
+  // Removed prompts for student name and ID
 
   // small validation: ensure SGPA calculated
   if (!sgpaDisplay.textContent) {
