@@ -69,8 +69,10 @@ function setDarkMode(on) {
    ------------------------- */
 programSelect.addEventListener('change', () => {
   const v = programSelect.value;
-  pucOptions.classList.toggle('hidden', v !== 'puc');
-  btechOptions.classList.toggle('hidden', v !== 'btech');
+  pucOptions.classList.add('hidden');
+  btechOptions.classList.add('hidden');
+  if (v === 'puc') pucOptions.classList.remove('hidden');
+  if (v === 'btech') btechOptions.classList.remove('hidden');
 }); // <-- Added missing closing bracket for event listener
 
 /* -------------------------
