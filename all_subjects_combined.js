@@ -601,7 +601,6 @@ window.subjectsBranch = "mme";
 window.subjectsData = mmeSubjects;
 
 
-// ===== File: puc.js =====
 window.subjectsBranch = "puc";
 window.subjectsData = {
   "PUC-I-1": [
@@ -657,5 +656,8 @@ window.subjectsData = {
     { code: "20PBE2210", name: "Biology Lab – IV (Optional)", credits: 1 }
   ]
 };
+};
+
+
 
 

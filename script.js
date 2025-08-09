@@ -26,24 +26,16 @@ const gradeList = ['EX','A','B','C','D','E','F'];
    We build a map by checking for common variable names.
    ------------------------- */
 function buildSubjectsMap() {
+  // Now we load only PUC data at start, branches are loaded dynamically
   const map = {};
-  if (typeof window.cseSubjects !== 'undefined') map['cse'] = window.cseSubjects;
-  if (typeof window.eceSubjects !== 'undefined') map['ece'] = window.eceSubjects;
-  if (typeof window.eeeSubjects !== 'undefined') map['eee'] = window.eeeSubjects;
-  if (typeof window.civilSubjects !== 'undefined') map['civil'] = window.civilSubjects;
-  if (typeof window.mechSubjects !== 'undefined') map['mech'] = window.mechSubjects;
-  if (typeof window.mmeSubjects !== 'undefined') map['mme'] = window.mmeSubjects;
-  if (typeof window.chemicalSubjects !== 'undefined') map['chem'] = window.chemicalSubjects;
   if (typeof window.subjectsData !== 'undefined') {
-    // subjectsData from last assignment likely refers to one of the sets (PUC or last)
-    // We'll attach PUC explicitly if exists
     if (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"]) {
       map['puc'] = window.subjectsData;
     }
   }
   return map;
 }
-const subjectsMap = buildSubjectsMap();
+let subjectsMap = buildSubjectsMap();
 
 /* -------------------------
    DOM refs
@@ -121,6 +113,10 @@ function clearSubjects() {
 loadSubjectsBtn.addEventListener('click', () => {
   showLoading(true);
   clearSubjects();
+  let loadingTimeout = setTimeout(() => {
+    showLoading(false);
+    subjectsContainer.innerHTML = `<div class='text-center text-rose-500 font-bold mt-8'>Loading is taking too long. Please check your internet connection or try again later.</div>`;
+  }, 5000); // 5 seconds
   const program = programSelect.value;
   if (!program) {
     alert('Choose PUC or BTECH first.');
@@ -129,52 +125,63 @@ loadSubjectsBtn.addEventListener('click', () => {
   console.log('Selected program:', program);
 
   if (program === 'puc') {
+    // ...existing code for PUC...
     const year = pucYear.value;
     const sem = pucSem.value;
     if (!year || !sem) { alert('Select PUC year and semester'); return; }
     console.log('PUC year:', year, 'PUC sem:', sem);
-    // Prompt for stream
     let stream = prompt('Enter your stream: Type "MPC" or "MBiPC"').trim().toUpperCase();
     if (stream !== 'MPC' && stream !== 'MBIPC') return alert('Please enter either "MPC" or "MBiPC"');
-    // key like PUC-I-1
     const key = `${year}-${sem}`;
-    console.log('PUC key:', key);
     let subjects = (subjectsMap['puc'] && subjectsMap['puc'][key]) ? subjectsMap['puc'][key] : null;
     if (!subjects) {
-      console.warn('Subjects not found for PUC key:', key, 'Available keys:', Object.keys(subjectsMap['puc'] || {}));
-    } else {
-      console.log('Loaded subjects:', subjects);
-    }
-    if (!subjects) {
+      clearTimeout(loadingTimeout);
       subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${key}. Make sure your all_subjects_combined.js includes PUC keys.</p>`;
+      showLoading(false);
       return;
     }
     if (stream === 'MPC') {
-      // Remove Biology and Biology Lab subjects
       subjects = subjects.filter(sub => !/biology/i.test(sub.name) && !/biology/i.test(sub.subcode));
     }
-  populateSubjects(subjects, 'puc', key);
-  showLoading(false);
+    populateSubjects(subjects, 'puc', key);
+    showLoading(false);
   } else {
+    // Dynamic branch data loading
     const branch = branchSelect.value;
     const year = yearSelect.value;
     const sem = btechSem.value;
     if (!branch || !year || !sem) { alert('Select branch, year and semester'); return; }
-    console.log('BTECH branch:', branch, 'year:', year, 'sem:', sem);
     const key = `${year}-${sem}`;
-    console.log('BTECH key:', key);
-    const subjects = (subjectsMap[branch] && subjectsMap[branch][key]) ? subjectsMap[branch][key] : null;
-    if (!subjects) {
-      console.warn('Subjects not found for branch:', branch, 'key:', key, 'Available keys:', Object.keys(subjectsMap[branch] || {}));
+    // If branch data not loaded, load it dynamically
+    if (!subjectsMap[branch]) {
+      let branchFile = `${branch}Subjects.js`;
+      let script = document.createElement('script');
+      script.src = branchFile;
+      script.onload = function() {
+        subjectsMap[branch] = window[`${branch}Subjects`];
+        finishBranchLoad();
+      };
+      script.onerror = function() {
+        clearTimeout(loadingTimeout);
+        subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Failed to load ${branchFile}. Please check your internet connection or contact admin.</p>`;
+        showLoading(false);
+      };
+      document.body.appendChild(script);
     } else {
-      console.log('Loaded subjects:', subjects);
+      finishBranchLoad();
     }
-    if (!subjects) {
-      subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${branch} ${key}. Make sure all_subjects_combined.js supports this branch/semester.</p>`;
-      return;
+    function finishBranchLoad() {
+      const subjects = (subjectsMap[branch] && subjectsMap[branch][key]) ? subjectsMap[branch][key] : null;
+      if (!subjects) {
+        clearTimeout(loadingTimeout);
+        subjectsContainer.innerHTML = `<p class="text-sm text-rose-500">Subjects not found for ${branch} ${key}. Make sure ${branch}Subjects.js supports this branch/semester.</p>`;
+        showLoading(false);
+        return;
+      }
+      populateSubjects(subjects, branch, key);
+      clearTimeout(loadingTimeout);
+      showLoading(false);
     }
-  populateSubjects(subjects, branch, key);
-  showLoading(false);
   }
 });
 
