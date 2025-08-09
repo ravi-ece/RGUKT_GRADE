@@ -272,6 +272,9 @@ function populateSubjects(subjects, branch, key) {
     } else {
       paginationControls.classList.add('hidden');
     }
+    // Ensure subjectsContainer is always visible and not covered by overlays
+    subjectsContainer.style.display = 'block';
+    subjectsContainer.style.visibility = 'visible';
   }
 
   // Event listeners for pagination
