@@ -240,93 +240,67 @@ function populateSubjects(subjects, branch, key) {
     }
     renderSubjectList();
     // Removed creation and display of floating 'Developed by RK' and 'Modify Subjects' buttons. Only footer button remains and is functional.
-      const row = document.createElement('div');
-      let branchBg = {
-        cse: 'bg-red-50 dark:bg-red-900',
-        ece: 'bg-blue-50 dark:bg-blue-900',
-        eee: 'bg-orange-50 dark:bg-orange-900',
-        civil: 'bg-yellow-50 dark:bg-yellow-900',
-        mech: 'bg-violet-50 dark:bg-violet-900',
-        mme: 'bg-pink-50 dark:bg-pink-900',
-        chem: 'bg-teal-50 dark:bg-teal-900',
-        puc: 'bg-green-50 dark:bg-green-900',
-        default: 'bg-white dark:bg-slate-900'
-      };
-      row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
-      // Improve dark mode contrast
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.classList.contains('dark')) {
-        row.style.backgroundColor = 'rgba(30,41,59,0.98)'; // dark slate
-        row.style.borderColor = '#334155';
-      } else {
-        row.style.backgroundColor = '';
-        row.style.borderColor = '';
-      }
-      // Branch theme colors for dropdown
-      const branchSelectBg = {
-        cse: 'bg-red-600',
-        ece: 'bg-blue-600',
-        eee: 'bg-orange-500',
-        civil: 'bg-yellow-400',
-        mech: 'bg-violet-600',
-        mme: 'bg-pink-500',
-        chem: 'bg-teal-600',
-        puc: 'bg-green-600',
-        default: 'bg-blue-600'
-      };
-      row.innerHTML = `
-        <div class="mb-1">
-          <div class="font-bold text-lg ${document.documentElement.classList.contains('dark') ? 'text-blue-200' : 'text-blue-900'}">${escapeHtml(s.name || s.name)}</div>
-          <div class="text-xs ${document.documentElement.classList.contains('dark') ? 'text-gray-300' : 'text-gray-700'}">${s.code || ''}</div>
-        </div>
-        <div class="mb-1 text-base ${document.documentElement.classList.contains('dark') ? 'text-gray-200' : 'text-gray-900'}">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
-        <div class="w-full">
-          <label class="sr-only">Grade</label>
-          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 ${branchSelectBg[branch] || branchSelectBg.default} text-white text-center font-bold" style="${document.documentElement.classList.contains('dark') ? 'background-color:#334155;' : ''}">
-            ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
-          </select>
-        </div>
-      `;
-      subjectsContainer.appendChild(row);
-    }
-    // show hint
-    const help = document.createElement('div');
-    help.className = 'mt-3 text-sm text-slate-500';
-    help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
-    subjectsContainer.appendChild(help);
-    // Update pagination controls
-    if (totalPages > 1) {
-      paginationControls.classList.remove('hidden');
-      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-      prevPageBtn.disabled = currentPage === 1;
-      nextPageBtn.disabled = currentPage === totalPages;
-    } else {
-      paginationControls.classList.add('hidden');
-    }
-  // Ensure modify button is visible
-  let modifyBtn = document.getElementById('modifySubjectsBtn');
-  if (modifyBtn) modifyBtn.style.display = 'block';
-    // Ensure subjectsContainer is always visible and not covered by overlays
-    subjectsContainer.style.display = 'block';
-    subjectsContainer.style.visibility = 'visible';
   }
+  // ...existing code...
 
-  // Event listeners for pagination
-  if (prevPageBtn && nextPageBtn) {
-    prevPageBtn.onclick = function() {
-      if (currentPage > 1) {
-        currentPage--;
-        renderPage(currentPage);
-      }
+  // Render subjects UI
+  subjects.forEach((s) => {
+    const row = document.createElement('div');
+    let branchBg = {
+      cse: 'bg-red-50 dark:bg-red-900',
+      ece: 'bg-blue-50 dark:bg-blue-900',
+      eee: 'bg-orange-50 dark:bg-orange-900',
+      civil: 'bg-yellow-50 dark:bg-yellow-900',
+      mech: 'bg-violet-50 dark:bg-violet-900',
+      mme: 'bg-pink-50 dark:bg-pink-900',
+      chem: 'bg-teal-50 dark:bg-teal-900',
+      puc: 'bg-green-50 dark:bg-green-900',
+      default: 'bg-white dark:bg-slate-900'
     };
-    nextPageBtn.onclick = function() {
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderPage(currentPage);
-      }
+    row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} ${branchBg[branch] || branchBg.default} mb-4 shadow-md`;
+    // Improve dark mode contrast
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.documentElement.classList.contains('dark')) {
+      row.style.backgroundColor = 'rgba(30,41,59,0.98)'; // dark slate
+      row.style.borderColor = '#334155';
+    } else {
+      row.style.backgroundColor = '';
+      row.style.borderColor = '';
+    }
+    // Branch theme colors for dropdown
+    const branchSelectBg = {
+      cse: 'bg-red-600',
+      ece: 'bg-blue-600',
+      eee: 'bg-orange-500',
+      civil: 'bg-yellow-400',
+      mech: 'bg-violet-600',
+      mme: 'bg-pink-500',
+      chem: 'bg-teal-600',
+      puc: 'bg-green-600',
+      default: 'bg-blue-600'
     };
-  }
-  // Initial render
-  renderPage(currentPage);
+    row.innerHTML = `
+      <div class="mb-1">
+        <div class="font-bold text-lg ${document.documentElement.classList.contains('dark') ? 'text-blue-200' : 'text-blue-900'}">${escapeHtml(s.name || s.name)}</div>
+        <div class="text-xs ${document.documentElement.classList.contains('dark') ? 'text-gray-300' : 'text-gray-700'}">${s.code || ''}</div>
+      </div>
+      <div class="mb-1 text-base ${document.documentElement.classList.contains('dark') ? 'text-gray-200' : 'text-gray-900'}">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
+      <div class="w-full">
+        <label class="sr-only">Grade</label>
+        <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 ${branchSelectBg[branch] || branchSelectBg.default} text-white text-center font-bold" style="${document.documentElement.classList.contains('dark') ? 'background-color:#334155;' : ''}">
+          ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
+        </select>
+      </div>
+    `;
+    subjectsContainer.appendChild(row);
+  });
+
+  // show hint
+  const help = document.createElement('div');
+  help.className = 'mt-3 text-sm text-slate-500';
+  help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
+  subjectsContainer.appendChild(help);
+
+  // ...existing code for pagination and visibility...
 }
 
 /* -------------------------
