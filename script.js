@@ -204,7 +204,7 @@ function populateSubjects(subjects, branch, key) {
   // Ensure both are visible
   modifyBtn.style.display = 'inline-block';
   if (rkLabel) rkLabel.style.display = 'inline-block';
-  modifyBtn.onclick = function() {
+    modifyBtn.addEventListener('click', () => {
     // Remove all subjects from view and show modal for selection
     subjectsContainer.innerHTML = '';
     let modal = document.getElementById('modifyModal');
@@ -239,95 +239,7 @@ function populateSubjects(subjects, branch, key) {
       });
     }
     renderSubjectList();
-    // Add subject logic
-    modal.querySelector('#addSubjectBtn').onclick = function() {
-      let name = prompt('Enter subject name:');
-      let credits = prompt('Enter subject credits:');
-      if (!name || !credits) return alert('Name and credits required.');
-      // Default code template per branch
-      let codeTemplates = {
-        cse: '23CSXXXX',
-        ece: '23ECXXXX',
-        eee: '23EEXXXX',
-        civil: '23CEXXXX',
-        mech: '23MEXXXX',
-        mme: '23MMXXXX',
-        chem: '23CHXXXX',
-        puc: '23PUCXXXX',
-        default: '23SUBXXXX'
-      };
-      let code = codeTemplates[branch] || codeTemplates.default;
-      subjects.push({ name, code, credits: parseFloat(credits) });
-      renderSubjectList();
-      populateSubjects(subjects, branch, key);
-    };
-    // Close modal
-    modal.querySelector('#closeModifyBtn').onclick = function() {
-      modal.style.display = 'none';
-      populateSubjects(subjects, branch, key);
-    };
-  };
-  // Update select dropdowns to match branch theme
-  const selects = document.querySelectorAll('select');
-  selects.forEach(sel => {
-    sel.classList.remove('cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme');
-    sel.classList.add(`${branch}-theme`);
-  });
-  // Update branch heading at top
-  const branchHeading = document.getElementById('branchHeading');
-  if (branchHeading) {
-    let branchName = branchThemes[branch]?.name || branch.toUpperCase();
-    branchHeading.textContent = `Branch: ${branchName}`;
-    branchHeading.className = `text-lg font-semibold mt-2 mb-1 text-center branch-tag ${branch}-theme`;
-  }
-  // Change whole web background theme based on branch
-  document.body.classList.remove(
-    'cse-bg','ece-bg','eee-bg','civil-bg','mech-bg','mme-bg','chem-bg','puc-bg','default-bg'
-  );
-  switch(branch) {
-    case 'cse': document.body.classList.add('cse-bg'); break;
-    case 'ece': document.body.classList.add('ece-bg'); break;
-    case 'eee': document.body.classList.add('eee-bg'); break;
-    case 'civil': document.body.classList.add('civil-bg'); break;
-    case 'mech': document.body.classList.add('mech-bg'); break;
-    case 'mme': document.body.classList.add('mme-bg'); break;
-    case 'chem': document.body.classList.add('chem-bg'); break;
-    case 'puc': document.body.classList.add('puc-bg'); break;
-    default: document.body.classList.add('default-bg'); break;
-  }
-  // PAGINATION LOGIC
-  const pageSize = subjects.length;
-  let currentPage = 1;
-  let totalPages = Math.ceil(subjects.length / pageSize);
-  const paginationControls = document.getElementById('paginationControls');
-  const prevPageBtn = document.getElementById('prevPageBtn');
-  const nextPageBtn = document.getElementById('nextPageBtn');
-  const pageInfo = document.getElementById('pageInfo');
-
-  function renderPage(page) {
-    subjectsContainer.innerHTML = '';
-    branchTag.classList.remove('hidden');
-    branchTag.textContent = (branchThemes[branch] && branchThemes[branch].tag) ? branchThemes[branch].tag : branch.toUpperCase();
-    branchTag.className = 'px-3 py-1 rounded-full text-sm font-medium branch-tag';
-    branchTag.classList.remove(
-      'cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme'
-    );
-    switch(branch) {
-      case 'cse': branchTag.classList.add('cse-theme'); break;
-      case 'ece': branchTag.classList.add('ece-theme'); break;
-      case 'eee': branchTag.classList.add('eee-theme'); break;
-      case 'civil': branchTag.classList.add('civil-theme'); break;
-      case 'mech': branchTag.classList.add('mech-theme'); break;
-      case 'mme': branchTag.classList.add('mme-theme'); break;
-      case 'chem': branchTag.classList.add('chem-theme'); break;
-      case 'puc': branchTag.classList.add('puc-theme'); break;
-      default: branchTag.classList.add('default-theme'); break;
-    }
-    // Render only subjects for current page
-    const startIdx = (page - 1) * pageSize;
-    const endIdx = Math.min(startIdx + pageSize, subjects.length);
-    for (let idx = startIdx; idx < endIdx; idx++) {
-      const s = subjects[idx];
+    // Removed creation and display of floating 'Developed by RK' and 'Modify Subjects' buttons. Only footer button remains and is functional.
       const row = document.createElement('div');
       let branchBg = {
         cse: 'bg-red-50 dark:bg-red-900',
