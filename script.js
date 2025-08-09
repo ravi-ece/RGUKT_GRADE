@@ -240,18 +240,16 @@ function populateSubjects(subjects, branch, key) {
     for (let idx = startIdx; idx < endIdx; idx++) {
       const s = subjects[idx];
       const row = document.createElement('div');
-  row.className = `flex flex-col gap-2 p-3 rounded-xl border border-transparent card-${branch} bg-white dark:bg-slate-800 mb-4 shadow-sm`;
+      row.className = `flex flex-col gap-2 p-4 rounded-xl border border-gray-300 dark:border-slate-700 card-${branch} bg-white dark:bg-slate-900 mb-4 shadow-md`;
       row.innerHTML = `
-        <div class="col-span-12 sm:col-span-6 md:col-span-6">
-          <div class="font-medium">${escapeHtml(s.name || s.name)}</div>
-          <div class="text-xs text-slate-500">${s.code || ''}</div>
+        <div class="mb-1">
+          <div class="font-bold text-lg text-blue-900 dark:text-blue-200">${escapeHtml(s.name || s.name)}</div>
+          <div class="text-xs text-gray-700 dark:text-gray-300">${s.code || ''}</div>
         </div>
-        <div class="col-span-6 sm:col-span-3 md:col-span-3">
-          <div class="text-sm">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
-        </div>
-        <div class="col-span-6 sm:col-span-3 md:col-span-3 text-right">
+        <div class="mb-1 text-base text-gray-900 dark:text-gray-200">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
+        <div class="w-full">
           <label class="sr-only">Grade</label>
-          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 bg-transparent text-center">
+          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 bg-blue-600 text-white text-center font-bold">
             ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
           </select>
         </div>
