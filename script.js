@@ -207,7 +207,7 @@ function populateSubjects(subjects, branch, key) {
     default: document.body.classList.add('default-bg'); break;
   }
   // PAGINATION LOGIC
-  const pageSize = 10;
+  const pageSize = 5;
   let currentPage = 1;
   let totalPages = Math.ceil(subjects.length / pageSize);
   const paginationControls = document.getElementById('paginationControls');
@@ -240,7 +240,7 @@ function populateSubjects(subjects, branch, key) {
     for (let idx = startIdx; idx < endIdx; idx++) {
       const s = subjects[idx];
       const row = document.createElement('div');
-      row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-pop card-${branch}`;
+  row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent card-${branch}`;
       row.innerHTML = `
         <div class="col-span-12 sm:col-span-6 md:col-span-6">
           <div class="font-medium">${escapeHtml(s.name || s.name)}</div>
