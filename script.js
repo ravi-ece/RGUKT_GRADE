@@ -28,8 +28,10 @@ const gradeList = ['EX','A','B','C','D','E','F'];
 function buildSubjectsMap() {
   // Now we load only PUC data at start, branches are loaded dynamically
   const map = {};
-  if (typeof window.pucSubjects !== 'undefined') {
-    map['puc'] = window.pucSubjects;
+  if (typeof window.subjectsData !== 'undefined') {
+    if (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"]) {
+      map['puc'] = window.subjectsData;
+    }
   }
   return map;
 }
@@ -59,30 +61,24 @@ const themeToggle = document.getElementById('themeToggle');
    Theme toggle
    ------------------------- */
 function setDarkMode(on) {
-  // Removed dark/light mode toggle logic
-} // <-- Added missing closing bracket for setDarkMode
+  if (on) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  themeToggle.textContent = on ? 'Light Mode' : 'Dark Mode';
+}
+themeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.toggle('dark');
+  themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+});
+themeToggle.textContent = 'Dark Mode';
 
 /* -------------------------
    Program select handler
    ------------------------- */
 programSelect.addEventListener('change', () => {
   const v = programSelect.value;
-  pucOptions.classList.add('hidden');
-  btechOptions.classList.add('hidden');
-  if (v === 'puc') {
-    pucOptions.classList.remove('hidden');
-  }
-  if (v === 'btech') {
-    btechOptions.classList.remove('hidden');
-    // Ensure selects are enabled and visible
-    if (!branchSelect) console.error('branchSelect not found');
-    if (!yearSelect) console.error('yearSelect not found');
-    if (!btechSem) console.error('btechSem not found');
-    if (branchSelect) branchSelect.disabled = false;
-    if (yearSelect) yearSelect.disabled = false;
-    if (btechSem) btechSem.disabled = false;
-  }
-}); // <-- Added missing closing bracket for event listener
+  pucOptions.classList.toggle('hidden', v !== 'puc');
+  btechOptions.classList.toggle('hidden', v !== 'btech');
+});
 
 /* -------------------------
    Build key for subjectsMap lookups
@@ -176,7 +172,7 @@ loadSubjectsBtn.addEventListener('click', () => {
   populateSubjects(subjects, branch, key);
     }
   }
-// Removed stray closing bracket
+});
 
 /* -------------------------
    Populate subjects & grade dropdowns
@@ -184,29 +180,30 @@ loadSubjectsBtn.addEventListener('click', () => {
 function populateSubjects(subjects, branch, key) {
   // Add 'Modify Subjects' button at the bottom
   let modifyBtn = document.getElementById('modifySubjectsBtn');
-  // Remove floating button and label, add to footer
-  let footer = document.getElementById('footerRK');
-  if (!footer) {
-    footer = document.createElement('div');
-    footer.id = 'footerRK';
-    footer.className = 'flex justify-center items-center gap-4 mt-4';
-    let rkLabel = document.createElement('span');
+  let rkLabel = document.getElementById('rkLabel');
+  if (!modifyBtn) {
+    // Create container for button and label
+    let container = document.createElement('div');
+    container.id = 'modifyBtnContainer';
+  container.className = 'fixed bottom-4 right-4 z-50 flex flex-row items-center gap-2 sm:gap-3';
+    // Create RK label
+    rkLabel = document.createElement('span');
     rkLabel.id = 'rkLabel';
     rkLabel.textContent = 'Developed by RK';
     rkLabel.className = 'px-4 py-2 rounded-xl bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold shadow-lg text-base';
-    let modifyBtn = document.createElement('button');
+    // Create button
+    modifyBtn = document.createElement('button');
     modifyBtn.id = 'modifySubjectsBtn';
     modifyBtn.textContent = 'Modify Subjects';
     modifyBtn.className = 'px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg';
-    footer.appendChild(rkLabel);
-    footer.appendChild(modifyBtn);
-    // Add to footer
-    let mainFooter = document.querySelector('footer');
-    if (mainFooter) mainFooter.appendChild(footer);
-    else document.body.appendChild(footer);
-  } else {
-    footer.style.display = 'flex';
+    // Add to container
+    container.appendChild(rkLabel);
+    container.appendChild(modifyBtn);
+    document.body.appendChild(container);
   }
+  // Ensure both are visible
+  modifyBtn.style.display = 'inline-block';
+  if (rkLabel) rkLabel.style.display = 'inline-block';
   modifyBtn.onclick = function() {
     // Remove all subjects from view and show modal for selection
     subjectsContainer.innerHTML = '';
@@ -506,136 +503,7 @@ function flashFail() {
    PDF download (screenshot of subjects section)
    Using html2canvas + jsPDF
    ------------------------- */
-function handleDownloadClick() {
-  const subjectsEl = document.getElementById('subjectsSection');
-  if (!subjectsEl) return alert('Nothing to download.');
-
-  // Removed prompts for student name and ID
-
-  // small validation: ensure SGPA calculated
-  if (!sgpaDisplay.textContent) {
-    if (!confirm('SGPA not calculated — still download current view?')) return;
-  }
-
-  downloadBtn.disabled = true;
-  downloadBtn.textContent = 'Preparing...';
-
-  // Generate PDF table matching RGUKT results style
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  let y = 60;
-
-  // RGUKT logo
-  const logoUrl = 'https://raw.githubusercontent.com/rgukt-ongole/brand-assets/main/logo.png';
-  const logoSize = 60;
-  new Promise((resolve) => {
-    const img = new window.Image();
-    img.crossOrigin = 'Anonymous';
-    img.src = logoUrl;
-    img.onload = () => {
-      pdf.addImage(img, 'PNG', pageWidth/2-logoSize/2, y, logoSize, logoSize);
-      resolve();
-    };
-    img.onerror = resolve;
-  }).then(() => {
-    y += logoSize + 10;
-    pdf.setFont('times', 'bold');
-    pdf.setFontSize(18);
-    pdf.text('Rajiv Gandhi University of Knowledge Technologies,', pageWidth/2, y, { align: 'center' });
-    y += 20;
-    pdf.setFont('times', 'normal');
-    pdf.setFontSize(12);
-    pdf.text('(A.P. Government Act 18 of 2008)', pageWidth/2, y, { align: 'center' });
-    y += 16;
-    pdf.setFont('times', 'bold');
-    pdf.setFontSize(14);
-    pdf.textWithLink('RGUKT Ongole Campus', pageWidth/2, y, { align: 'center', url: 'https://rguktong.ac.in/' });
-    y += 16;
-    pdf.setFont('times', 'normal');
-    pdf.setFontSize(12);
-    pdf.text('Kurnool Road, Santhanutalapadu(V&M), Prakasam District, A.P – 523225', pageWidth/2, y, { align: 'center' });
-    y += 20;
-    pdf.setDrawColor(180);
-    pdf.line(60, y, pageWidth-60, y);
-    y += 18;
-
-    // Student info row
-    pdf.setFont('times', 'bold');
-    pdf.setFontSize(13);
-    pdf.text(`ID: ${studentId}`, 60, y);
-    pdf.text(`NAME: ${studentName}`, pageWidth-220, y);
-    let branch = document.getElementById('branchSelect')?.value?.toUpperCase() || 'PUC';
-    let year = document.getElementById('yearSelect')?.value || '';
-    let sem = document.getElementById('btechSem')?.value || '';
-    let yearSem = year && sem ? `YEAR: E${year} SEM${sem}` : '';
-    pdf.setFont('times', 'bold');
-    pdf.text(`BRANCH: ${branch}`, 60, y+18);
-    pdf.text(yearSem, pageWidth-220, y+18);
-    y += 38;
-
-    // Table columns: SNO, SUBCODE, SUBNAME, CREDITS, GRADES
-    const colX = [60, 120, 210, 430, 510];
-    const colW = [60, 90, 220, 80, 60];
-    pdf.setFont('times', 'bold');
-    pdf.setFontSize(12);
-    pdf.setFillColor(255,255,255);
-    pdf.rect(colX[0], y, colW.reduce((a,b)=>a+b), 24, 'S');
-    pdf.text('SNO', colX[0]+18, y+16, { align: 'center' });
-    pdf.text('SUBCODE', colX[1]+30, y+16, { align: 'center' });
-    pdf.text('SUBNAME', colX[2]+110, y+16, { align: 'center' });
-    pdf.text('CREDITS', colX[3]+30, y+16, { align: 'center' });
-    pdf.text('GRADES', colX[4]+30, y+16, { align: 'center' });
-    y += 24;
-
-    // Table rows
-    pdf.setFont('times', 'normal');
-    let subjects = Array.from(subjectsEl.querySelectorAll('.grid'));
-    subjects.forEach((row, idx) => {
-      const name = row.querySelector('.font-medium')?.textContent || '';
-      const code = row.querySelector('.text-xs')?.textContent || '';
-      const credits = row.querySelector('.font-semibold')?.textContent || '';
-      const grade = row.querySelector('.gradeSelect')?.value || '';
-      pdf.setFillColor(255,255,255);
-      pdf.rect(colX[0], y, colW.reduce((a,b)=>a+b), 22, 'S');
-      pdf.text(String(idx+1), colX[0]+18, y+15, { align: 'center' });
-      pdf.text(code, colX[1]+30, y+15, { align: 'center' });
-      // Wrap subject name if too long
-      let wrappedName = pdf.splitTextToSize(name, colW[2]-20);
-      pdf.text(wrappedName, colX[2]+10, y+15, { maxWidth: colW[2]-20 });
-      y += (22 * wrappedName.length) - 22;
-      pdf.text(credits, colX[3]+30, y+15, { align: 'center' });
-      pdf.text(grade, colX[4]+30, y+15, { align: 'center' });
-      y += 22;
-      if (y > pdf.internal.pageSize.getHeight()-80) {
-        pdf.addPage();
-        y = 60;
-      }
-    });
-
-    // Controller of Examinations
-    // Add SGPA to PDF
-    y += 20;
-    pdf.setFont('times', 'bold');
-    pdf.setFontSize(14);
-    pdf.text(`SGPA: ${sgpaDisplay.textContent || '--'}`, 60, y);
-    y += 30;
-    pdf.setFont('times', 'normal');
-    pdf.setFontSize(13);
-    pdf.text('Controller of Examinations', pageWidth/2, y+30, { align: 'center' });
-    pdf.setProperties({ title: 'SGPA Report' });
-    const name = `SGPA_Report_${new Date().toISOString().slice(0,10)}.pdf`;
-    pdf.save(name);
-
-    downloadBtn.disabled = false;
-    downloadBtn.textContent = 'Download Report';
-  });
-}
-
-downloadBtn.addEventListener('click', handleDownloadClick);
-const fabDownload = document.getElementById('fabDownload');
-if (fabDownload) fabDownload.addEventListener('click', handleDownloadClick);
+downloadBtn.addEventListener('click', async () => {
   const subjectsEl = document.getElementById('subjectsSection');
   if (!subjectsEl) return alert('Nothing to download.');
 
