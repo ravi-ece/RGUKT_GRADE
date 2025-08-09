@@ -55,13 +55,14 @@ const sgpaDisplay = document.getElementById('sgpaDisplay');
 const classAward = document.getElementById('classAward');
 const branchTag = document.getElementById('branchTag');
 const downloadBtn = document.getElementById('downloadBtn');
-// Removed themeToggle
+const themeToggle = document.getElementById('themeToggle');
 
 /* -------------------------
    Theme toggle
    ------------------------- */
 function setDarkMode(on) {
-// Removed dark/light mode toggle logic
+  // Removed dark/light mode toggle logic
+} // <-- Added missing closing bracket for setDarkMode
 
 /* -------------------------
    Program select handler
@@ -70,7 +71,7 @@ programSelect.addEventListener('change', () => {
   const v = programSelect.value;
   pucOptions.classList.toggle('hidden', v !== 'puc');
   btechOptions.classList.toggle('hidden', v !== 'btech');
-  // Removed closing bracket from theme toggle logic
+}); // <-- Added missing closing bracket for event listener
 
 /* -------------------------
    Build key for subjectsMap lookups
