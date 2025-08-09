@@ -1,3 +1,37 @@
+// Link left-side floating Modify Subjects button to modal logic
+const leftModifyBtn = document.getElementById('modifySubjectsBtnFloating');
+if (leftModifyBtn) {
+  leftModifyBtn.addEventListener('click', () => {
+    // Show explanation toast/alert first
+    alert('Modify Subjects: This button allows you to add, remove, or change subjects for your selected semester. Use it to customize your subject list before calculating SGPA.');
+    // Then show the modify subjects modal
+    let modal = document.getElementById('modifyModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modifyModal';
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/40';
+      modal.innerHTML = `<div class="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-2xl">
+        <h2 class="text-xl font-bold mb-4">Modify Subjects</h2>
+        <div id="subjectList" class="mb-4"></div>
+        <button id="addSubjectBtn" class="w-full py-2 rounded-lg bg-green-600 text-white font-bold mb-2">Add New Subject</button>
+        <button id="closeModifyBtn" class="w-full py-2 rounded-lg bg-gray-400 text-white font-bold">Done</button>
+      </div>`;
+      document.body.appendChild(modal);
+    } else {
+      modal.style.display = 'flex';
+    }
+    // Render subjects as removable items
+    function renderSubjectList() {
+      const subjectList = modal.querySelector('#subjectList');
+      subjectList.innerHTML = '';
+      // ...existing code to render subjects...
+    }
+    renderSubjectList();
+    modal.querySelector('#closeModifyBtn').onclick = () => {
+      modal.style.display = 'none';
+    };
+  });
+}
 // Floating Modify Subjects button handler
 document.getElementById('modifySubjectsBtnFloating')?.addEventListener('click', () => {
   alert('Modify Subjects: This button allows you to add, remove, or change subjects for your selected semester. Use it to customize your subject list before calculating SGPA.');
