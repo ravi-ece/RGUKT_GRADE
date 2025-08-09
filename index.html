@@ -215,6 +215,11 @@
         </div>
   <div id="subjectsContainer" class="space-y-5">
           <p class="text-lg text-slate-500">Select program and load subjects to begin.</p>
+          <div id="paginationControls" class="flex justify-center items-center gap-4 mt-4 hidden">
+            <button id="prevPageBtn" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold shadow hover:scale-105 transition-transform">Prev</button>
+            <span id="pageInfo" class="text-base font-semibold text-slate-700 dark:text-slate-300"></span>
+            <button id="nextPageBtn" class="px-4 py-2 rounded-lg bg-blue-500 text-white font-bold shadow hover:scale-105 transition-transform">Next</button>
+          </div>
         </div>
         <div class="mt-6 flex gap-4 items-center">
           <button id="calcBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white text-lg font-bold shadow-lg hover:scale-105 transition-transform">Calculate SGPA</button>

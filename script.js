@@ -210,53 +210,91 @@ function populateSubjects(subjects, branch, key) {
     case 'puc': document.body.classList.add('puc-bg'); break;
     default: document.body.classList.add('default-bg'); break;
   }
-  subjectsContainer.innerHTML = '';
-  branchTag.classList.remove('hidden');
-  branchTag.textContent = (branchThemes[branch] && branchThemes[branch].tag) ? branchThemes[branch].tag : branch.toUpperCase();
-  // Remove previous color classes and set base classes
-  branchTag.className = 'px-3 py-1 rounded-full text-sm font-medium branch-tag';
-  branchTag.classList.remove(
-    'cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme'
-  );
-  switch(branch) {
-    case 'cse': branchTag.classList.add('cse-theme'); break;
-    case 'ece': branchTag.classList.add('ece-theme'); break;
-    case 'eee': branchTag.classList.add('eee-theme'); break;
-    case 'civil': branchTag.classList.add('civil-theme'); break;
-    case 'mech': branchTag.classList.add('mech-theme'); break;
-    case 'mme': branchTag.classList.add('mme-theme'); break;
-    case 'chem': branchTag.classList.add('chem-theme'); break;
-    case 'puc': branchTag.classList.add('puc-theme'); break;
-    default: branchTag.classList.add('default-theme'); break;
+  // PAGINATION LOGIC
+  const pageSize = 10;
+  let currentPage = 1;
+  let totalPages = Math.ceil(subjects.length / pageSize);
+  const paginationControls = document.getElementById('paginationControls');
+  const prevPageBtn = document.getElementById('prevPageBtn');
+  const nextPageBtn = document.getElementById('nextPageBtn');
+  const pageInfo = document.getElementById('pageInfo');
+
+  function renderPage(page) {
+    subjectsContainer.innerHTML = '';
+    branchTag.classList.remove('hidden');
+    branchTag.textContent = (branchThemes[branch] && branchThemes[branch].tag) ? branchThemes[branch].tag : branch.toUpperCase();
+    branchTag.className = 'px-3 py-1 rounded-full text-sm font-medium branch-tag';
+    branchTag.classList.remove(
+      'cse-theme','ece-theme','eee-theme','civil-theme','mech-theme','mme-theme','chem-theme','puc-theme','default-theme'
+    );
+    switch(branch) {
+      case 'cse': branchTag.classList.add('cse-theme'); break;
+      case 'ece': branchTag.classList.add('ece-theme'); break;
+      case 'eee': branchTag.classList.add('eee-theme'); break;
+      case 'civil': branchTag.classList.add('civil-theme'); break;
+      case 'mech': branchTag.classList.add('mech-theme'); break;
+      case 'mme': branchTag.classList.add('mme-theme'); break;
+      case 'chem': branchTag.classList.add('chem-theme'); break;
+      case 'puc': branchTag.classList.add('puc-theme'); break;
+      default: branchTag.classList.add('default-theme'); break;
+    }
+    // Render only subjects for current page
+    const startIdx = (page - 1) * pageSize;
+    const endIdx = Math.min(startIdx + pageSize, subjects.length);
+    for (let idx = startIdx; idx < endIdx; idx++) {
+      const s = subjects[idx];
+      const row = document.createElement('div');
+      row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-pop card-${branch}`;
+      row.innerHTML = `
+        <div class="col-span-12 sm:col-span-6 md:col-span-6">
+          <div class="font-medium">${escapeHtml(s.name || s.name)}</div>
+          <div class="text-xs text-slate-500">${s.code || ''}</div>
+        </div>
+        <div class="col-span-6 sm:col-span-3 md:col-span-3">
+          <div class="text-sm">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
+        </div>
+        <div class="col-span-6 sm:col-span-3 md:col-span-3 text-right">
+          <label class="sr-only">Grade</label>
+          <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 bg-transparent text-center">
+            ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
+          </select>
+        </div>
+      `;
+      subjectsContainer.appendChild(row);
+    }
+    // show hint
+    const help = document.createElement('div');
+    help.className = 'mt-3 text-sm text-slate-500';
+    help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
+    subjectsContainer.appendChild(help);
+    // Update pagination controls
+    if (totalPages > 1) {
+      paginationControls.classList.remove('hidden');
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages;
+    } else {
+      paginationControls.classList.add('hidden');
+    }
   }
 
-  // subject rows
-  subjects.forEach((s, idx) => {
-    const row = document.createElement('div');
-    row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-pop card-${branch}`;
-    row.innerHTML = `
-      <div class="col-span-12 sm:col-span-6 md:col-span-6">
-        <div class="font-medium">${escapeHtml(s.name || s.name)}</div>
-        <div class="text-xs text-slate-500">${s.code || ''}</div>
-      </div>
-      <div class="col-span-6 sm:col-span-3 md:col-span-3">
-        <div class="text-sm">Credits: <span class="font-semibold">${s.credits ?? 0}</span></div>
-      </div>
-      <div class="col-span-6 sm:col-span-3 md:col-span-3 text-right">
-        <label class="sr-only">Grade</label>
-        <select data-credits="${s.credits ?? 0}" class="gradeSelect w-full rounded-md border p-2 bg-transparent text-center">
-          ${gradeList.map(g => `<option value="${g}">${g}</option>`).join('')}
-        </select>
-      </div>
-    `;
-    subjectsContainer.appendChild(row);
-  });
-
-  // show hint
-  const help = document.createElement('div');
-  help.className = 'mt-3 text-sm text-slate-500';
-  help.textContent = "Default grade is EX. Change grades for each subject. If any subject gets 'F', SGPA will show as Fail.";
-  subjectsContainer.appendChild(help);
+  // Event listeners for pagination
+  if (prevPageBtn && nextPageBtn) {
+    prevPageBtn.onclick = function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    };
+    nextPageBtn.onclick = function() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage(currentPage);
+      }
+    };
+  }
+  // Initial render
+  renderPage(currentPage);
 }
 
 /* -------------------------
