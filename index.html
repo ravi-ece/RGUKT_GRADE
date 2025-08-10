@@ -20,12 +20,17 @@
 
   <style>
       /* Mobile: use exact desktop gradient colors for header background */
-      @media (max-width: 600px) {
-        header {
-          background: linear-gradient(to right, #bae6fd 0%, #f0fdfa 50%, #bbf7d0 100%) !important;
-        }
+      
       }
   /* ...existing code... */
+
+@media (max-width: 600px) {
+  header {
+    background: linear-gradient(120deg, #dbeafe 0%, #60a5fa 100%) !important;
+    box-shadow: none !important;
+  }
+}
+
       /* Restore previous theme for logo and background on mobile */
       @media (max-width: 600px) {
         .bg-white\/70, .dark\:bg-slate-900\/70 {
@@ -231,6 +236,25 @@
   }
 }
 
+
+/* Ensure buttons don't overlap on desktop and mobile */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+}
+
 </style>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen">
@@ -414,6 +438,25 @@
   }
 }
 
+
+/* Ensure buttons don't overlap on desktop and mobile */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+}
+
 </style>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         </button>
@@ -461,6 +504,25 @@
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 10px !important;
+  }
+}
+
+
+/* Ensure buttons don't overlap on desktop and mobile */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
   }
 }
 
