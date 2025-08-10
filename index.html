@@ -218,7 +218,20 @@
       60% { transform: scale(1.05) rotate(2deg); opacity: 1; }
       100% { transform: scale(1) rotate(0deg); }
     }
-  </style>
+  
+@media (max-width: 640px) {
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+}
+
+</style>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen">
 <!-- Floating Action Button -->
@@ -388,7 +401,20 @@
             right: 16px !important;
           }
         }
-      </style>
+      
+@media (max-width: 640px) {
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+}
+
+</style>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         </button>
   <div class="absolute -top-8 -right-8 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-br from-green-300 to-blue-200 rounded-full blur-2xl opacity-30 animate-float"></div>
@@ -425,7 +451,20 @@
     .animate-gradientMove { animation: gradientMove 12s ease-in-out infinite alternate; }
     .animate-float { animation: float 6s ease-in-out infinite alternate; }
     @keyframes float { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-12px) scale(1.05); } }
-  </style>
+  
+@media (max-width: 640px) {
+  #calcBtn, #modifyBtn, #loadSubjectsBtn {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  .button-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+}
+
+</style>
 </footer>
 
 <!-- scripts -->
