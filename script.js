@@ -43,7 +43,7 @@ function buildSubjectsMap() {
     }
   }
   return map;
-}
+
 const subjectsMap = buildSubjectsMap();
 
 /* -------------------------
