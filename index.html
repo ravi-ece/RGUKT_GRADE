@@ -19,6 +19,20 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <style>
+      /* Modern gradient background for mobile theme */
+      @media (max-width: 600px) {
+        body {
+          background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 40%, #a7f3d0 100%) !important;
+          min-height: 100vh;
+        }
+        main, header, footer {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+        .fixed.inset-0 {
+          display: none !important;
+        }
+      }
       /* Completely disable header/background animations and ensure logo is always visible on mobile */
       @media (max-width: 600px) {
         .animate-fade-in,
