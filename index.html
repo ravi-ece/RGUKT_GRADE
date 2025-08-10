@@ -368,7 +368,13 @@
               </div>
             </div>
           </div>
-        <button id="modifySubjectsBtn" class="fixed bottom-8 left-8 z-50 p-5 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-2xl hover:scale-110 transition-transform text-2xl font-bold flex items-center gap-2" style="min-width:56px;min-height:56px;justify-content:center;align-items:center;" title="Modify Subjects">
+  <button id="modifySubjectsBtn" class="fixed bottom-8 left-8 z-50 p-5 rounded-full bg-gradient-to-br from-blue-500 to-blue-400 text-white shadow-2xl hover:scale-110 transition-transform text-2xl font-bold flex items-center gap-2 animate-fade-in-up" style="min-width:56px;min-height:56px;justify-content:center;align-items:center;" title="Modify Subjects">
+      /* Mobile: blue light header background */
+      @media (max-width: 600px) {
+        header {
+          background: linear-gradient(120deg, #dbeafe 0%, #60a5fa 100%) !important;
+        }
+      }
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         </button>
   <div class="absolute -top-8 -right-8 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-br from-green-300 to-blue-200 rounded-full blur-2xl opacity-30 animate-float"></div>
