@@ -62,6 +62,37 @@ const calcBtn = document.getElementById('calcBtn');
 const sgpaDisplay = document.getElementById('sgpaDisplay');
 const classAward = document.getElementById('classAward');
 const branchTag = document.getElementById('branchTag');
+// Utility to set button theme colors based on branch
+function updateButtonThemes(branch) {
+  const themeMap = {
+    cse: { from: 'from-red-400', to: 'to-red-600', text: 'text-red-900', border: 'border-red-600' },
+    ece: { from: 'from-blue-400', to: 'to-blue-600', text: 'text-blue-900', border: 'border-blue-600' },
+    eee: { from: 'from-orange-400', to: 'to-orange-600', text: 'text-orange-900', border: 'border-orange-600' },
+    civil: { from: 'from-yellow-300', to: 'to-yellow-500', text: 'text-yellow-900', border: 'border-yellow-600' },
+    mech: { from: 'from-violet-400', to: 'to-violet-600', text: 'text-violet-900', border: 'border-violet-600' },
+    mme: { from: 'from-pink-400', to: 'to-pink-600', text: 'text-pink-900', border: 'border-pink-600' },
+    chem: { from: 'from-teal-400', to: 'to-teal-600', text: 'text-teal-900', border: 'border-teal-600' },
+    puc: { from: 'from-green-400', to: 'to-green-600', text: 'text-green-900', border: 'border-green-600' }
+  };
+  const theme = themeMap[branch] || themeMap['puc'];
+  const buttons = [
+    document.getElementById('downloadBtn'),
+    document.getElementById('calcBtn'),
+    document.getElementById('loadSubjectsBtn'),
+    ...document.querySelectorAll('button')
+  ];
+  buttons.forEach(btn => {
+    if (!btn) return;
+    btn.classList.remove(
+      'from-green-500','to-blue-500','from-blue-600','to-green-500','from-indigo-600','to-green-500',
+      'from-blue-500','to-green-500','from-green-400','to-green-600','from-red-400','to-red-600','from-blue-400','to-blue-600',
+      'from-orange-400','to-orange-600','from-yellow-300','to-yellow-500','from-violet-400','to-violet-600','from-pink-400','to-pink-600','from-teal-400','to-teal-600',
+      'text-green-900','text-blue-900','text-red-900','text-orange-900','text-yellow-900','text-violet-900','text-pink-900','text-teal-900',
+      'border-green-600','border-blue-600','border-red-600','border-orange-600','border-yellow-600','border-violet-600','border-pink-600','border-teal-600'
+    );
+    btn.classList.add(theme.from, theme.to, theme.text, theme.border);
+  });
+}
 const downloadBtn = document.getElementById('downloadBtn');
 const themeToggle = document.getElementById('themeToggle');
 
@@ -83,6 +114,13 @@ themeToggle.textContent = 'Dark Mode';
    Program select handler
    ------------------------- */
 programSelect.addEventListener('change', () => {
+branchSelect?.addEventListener('change', function() {
+  updateButtonThemes(this.value);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  updateButtonThemes(branchSelect?.value || 'puc');
+});
   const v = programSelect.value;
   pucOptions.classList.toggle('hidden', v !== 'puc');
   btechOptions.classList.toggle('hidden', v !== 'btech');
