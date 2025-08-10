@@ -531,4 +531,100 @@ function escapeHtml(unsafe) {
 window.addEventListener('load', () => {
   if (window.feather) feather.replace();
 });
+// --- Modify Subjects Modal Logic ---
+const modifyBtn = document.getElementById('modifySubjectsBtn');
+const modifyModal = document.getElementById('modifySubjectsModal');
+const closeModifyModal = document.getElementById('closeModifyModal');
+const addSubjectForm = document.getElementById('addSubjectForm');
+const removeSubjectsList = document.getElementById('removeSubjectsList');
+const saveSubjectsBtn = document.getElementById('saveSubjectsBtn');
+
+let currentSubjects = [];
+let removedSubjects = new Set();
+
+function getBranchCodePrefix(branch) {
+  return {
+    cse: '24CS', ece: '24EC', eee: '24EE', civil: '24CE', mech: '24ME', mme: '24MM', chem: '24CH', puc: '24PU'
+  }[branch] || '24XX';
+}
+
+function showModifyModal(subjects, branch) {
+  currentSubjects = [...subjects];
+  removedSubjects = new Set();
+  // Populate remove list
+  removeSubjectsList.innerHTML = '';
+  subjects.forEach((sub, idx) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<label><input type="checkbox" data-idx="${idx}" /> ${sub.name} <span class='text-xs text-gray-500'>(${sub.subcode})</span></label>`;
+    removeSubjectsList.appendChild(div);
+  });
+  // Set default code prefix for branch
+  document.getElementById('newSubjectCode').value = getBranchCodePrefix(branch) + 'XXXX';
+  modifyModal.classList.remove('hidden');
+}
+
+modifyBtn?.addEventListener('click', () => {
+  // Try to get current branch and subjects
+  let branch = branchSelect?.value || 'puc';
+  let subjects = Array.from(subjectsContainer.querySelectorAll('.grid')).map(row => {
+    return {
+      name: row.querySelector('.font-medium')?.textContent || '',
+      subcode: row.querySelector('.text-xs')?.textContent || '',
+      credits: row.querySelector('.font-semibold')?.textContent || '',
+      grade: row.querySelector('.gradeSelect')?.value || ''
+    };
+  });
+  showModifyModal(subjects, branch);
+});
+
+closeModifyModal?.addEventListener('click', () => {
+  modifyModal.classList.add('hidden');
+});
+
+addSubjectForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('newSubjectName').value.trim();
+  const subcode = document.getElementById('newSubjectCode').value.trim();
+  const credits = document.getElementById('newSubjectCredits').value.trim();
+  if (!name || !subcode || !credits) return;
+  currentSubjects.push({ name, subcode, credits, grade: '' });
+  showModifyModal(currentSubjects, branchSelect?.value || 'puc');
+});
+
+removeSubjectsList?.addEventListener('change', (e) => {
+  if (e.target && e.target.dataset.idx) {
+    const idx = Number(e.target.dataset.idx);
+    if (e.target.checked) removedSubjects.add(idx);
+    else removedSubjects.delete(idx);
+  }
+});
+
+saveSubjectsBtn?.addEventListener('click', () => {
+  // Remove selected subjects
+  currentSubjects = currentSubjects.filter((_, idx) => !removedSubjects.has(idx));
+  // Update UI
+  subjectsContainer.innerHTML = '';
+  currentSubjects.forEach((sub, i) => {
+    const div = document.createElement('div');
+    div.className = 'grid grid-cols-5 gap-2 items-center py-2 px-3 rounded-xl shadow bg-white dark:bg-slate-800';
+    div.innerHTML = `
+      <div class="font-medium col-span-2">${sub.name}</div>
+      <div class="text-xs">${sub.subcode}</div>
+      <div class="font-semibold">${sub.credits}</div>
+      <select class="gradeSelect rounded-lg border p-1">
+        <option value="">--</option>
+        <option value="EX">EX</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+      </select>
+    `;
+    subjectsContainer.appendChild(div);
+  });
+  modifyModal.classList.add('hidden');
+});
+// --- End Modify Subjects Modal Logic ---
 
