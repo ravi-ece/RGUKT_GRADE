@@ -25,6 +25,25 @@
     .pop { animation: pop .28s ease both; }
     @keyframes pop { 0%{transform:scale(.95)} 70%{transform:scale(1.02)} 100%{transform:scale(1)} }
 
+      /* Reduce animation durations for mobile devices */
+      @media (max-width: 600px) {
+        .fade-in { animation: fadeIn 0.15s ease both !important; }
+        .pop { animation: pop 0.12s ease both !important; }
+        .cse-bg, .ece-bg, .eee-bg, .civil-bg, .mech-bg, .mme-bg, .chem-bg, .puc-bg {
+          animation-duration: 2s !important;
+        }
+        html.dark .cse-bg,
+        html.dark .ece-bg,
+        html.dark .eee-bg,
+        html.dark .civil-bg,
+        html.dark .mech-bg,
+        html.dark .mme-bg,
+        html.dark .chem-bg,
+        html.dark .puc-bg {
+          animation-duration: 2s !important;
+        }
+      }
+
     /* Branch color themes for tag and cards */
     .branch-tag.cse-theme, .card-cse { background: #fee2e2; color: #991b1b; }
     .branch-tag.ece-theme, .card-ece { background: #dbeafe; color: #1e3a8a; }

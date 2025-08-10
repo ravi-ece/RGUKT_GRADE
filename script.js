@@ -303,13 +303,15 @@ calcBtn.addEventListener('click', () => {
   congrats.textContent = '🎉 Congratulations!';
   congrats.className = 'fixed top-1/3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-400 to-blue-500 text-white text-3xl font-extrabold px-8 py-4 rounded-xl shadow-lg animate-fade-in-up z-50';
   document.body.appendChild(congrats);
-  setTimeout(()=> {
-    sgpaDisplay.classList.remove('animate-bounce','text-green-600','font-bold','scale-110','transition-all','duration-500');
-    congrats.classList.add('animate-fade-out');
-    setTimeout(()=>{
-      congrats.remove();
-    }, 800);
-  }, 1800);
+    // Mobile animation duration helper
+    function isMobile() { return window.innerWidth <= 600; }
+    setTimeout(()=> {
+      sgpaDisplay.classList.remove('animate-bounce','text-green-600','font-bold','scale-110','transition-all','duration-500');
+      congrats.classList.add('animate-fade-out');
+      setTimeout(()=>{
+        congrats.remove();
+      }, isMobile() ? 250 : 800);
+    }, isMobile() ? 400 : 1800);
 
   // Award classification using RGUKT table (CGPA==SGPA here)
   let award = '';
@@ -338,7 +340,7 @@ function flashFail() {
   sgpaDisplay.classList.add('animate-[shake_0.6s]','text-rose-500');
   setTimeout(()=> {
     sgpaDisplay.classList.remove('animate-[shake_0.6s]','text-rose-500');
-  },700);
+  }, window.innerWidth <= 600 ? 150 : 700);
 }
 
 /* -------------------------
