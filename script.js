@@ -34,12 +34,11 @@ function buildSubjectsMap() {
   if (typeof window.mechSubjects !== 'undefined') map['mech'] = window.mechSubjects;
   if (typeof window.mmeSubjects !== 'undefined') map['mme'] = window.mmeSubjects;
   if (typeof window.chemicalSubjects !== 'undefined') map['chem'] = window.chemicalSubjects;
-  if (typeof window.subjectsData !== 'undefined') {
-    // subjectsData from last assignment likely refers to one of the sets (PUC or last)
-    // We'll attach PUC explicitly if exists
-    if (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"]) {
-      map['puc'] = window.subjectsData;
-    }
+  // Always prefer explicit PUC mapping if available
+  if (typeof window.subjectsData !== 'undefined' && (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"])) {
+    map['puc'] = window.subjectsData;
+  } else if (typeof window.pucSubjects !== 'undefined') {
+    map['puc'] = window.pucSubjects;
   }
   return map;
 }
@@ -151,7 +150,7 @@ loadSubjectsBtn.addEventListener('click', () => {
     }
     if (stream === 'MPC') {
       // Remove Biology and Biology Lab subjects
-      subjects = subjects.filter(sub => !/biology/i.test(sub.name) && !/biology/i.test(sub.subcode));
+      subjects = subjects.filter(sub => !/biology/i.test(sub.name) && !/biology/i.test(sub.code));
     }
   populateSubjects(subjects, 'puc', key);
   showLoading(false);
