@@ -19,18 +19,70 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <style>
-      /* Modern gradient background for mobile theme */
+      /* Match desktop logo and header style for mobile */
       @media (max-width: 600px) {
-        body {
-          background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 40%, #a7f3d0 100%) !important;
-          min-height: 100vh;
+        header {
+          background: linear-gradient(120deg, #1e293b 0%, #334155 100%) !important;
+          box-shadow: 0 4px 32px rgba(30,41,59,0.12) !important;
+          border-bottom: 1px solid #334155 !important;
+          padding-top: 1.5rem !important;
+          padding-bottom: 1.5rem !important;
         }
-        main, header, footer {
-          background: transparent !important;
-          box-shadow: none !important;
+        .bg-white\/70, .dark\:bg-slate-900\/70 {
+          background: #fff !important;
+          border-radius: 2rem !important;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+          padding: 1rem !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          width: 100vw !important;
+          max-width: 100vw !important;
+          margin: 0 auto !important;
         }
-        .fixed.inset-0 {
-          display: none !important;
+        img[alt="RGUKT Logo"] {
+          width: 120px !important;
+          height: 120px !important;
+          max-width: 120px !important;
+          max-height: 120px !important;
+          border-radius: 50% !important;
+          box-shadow: 0 4px 24px rgba(30,41,59,0.12);
+          border: 8px solid #22c55e !important;
+          background: #fff !important;
+          margin: 0 auto !important;
+          display: block !important;
+        }
+        h1 {
+          font-size: 2rem !important;
+          font-weight: 800 !important;
+          text-align: center !important;
+          color: #a7f3d0 !important;
+          margin-top: 1rem !important;
+          margin-bottom: 0.5rem !important;
+          letter-spacing: 0.02em !important;
+        }
+        h2 {
+          font-size: 1.1rem !important;
+          font-weight: 600 !important;
+          text-align: center !important;
+          color: #22c55e !important;
+          margin-bottom: 1rem !important;
+        }
+      }
+      /* Restore previous theme for logo and background on mobile */
+      @media (max-width: 600px) {
+        .bg-white\/70, .dark\:bg-slate-900\/70 {
+          background: rgba(255,255,255,0.7) !important;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+          border-radius: 2rem !important;
+          padding: 1rem !important;
+        }
+        img[alt="RGUKT Logo"] {
+          background: #fff !important;
+          border-radius: 50% !important;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+          margin: 0 auto !important;
+          display: block !important;
         }
       }
       /* Completely disable header/background animations and ensure logo is always visible on mobile */
