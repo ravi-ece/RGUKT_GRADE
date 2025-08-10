@@ -34,7 +34,8 @@ function buildSubjectsMap() {
   if (typeof window.mechSubjects !== 'undefined') map['mech'] = window.mechSubjects;
   if (typeof window.mmeSubjects !== 'undefined') map['mme'] = window.mmeSubjects;
   if (typeof window.chemicalSubjects !== 'undefined') map['chem'] = window.chemicalSubjects;
-  if (typeof window.subjectsData !== 'undefined') {
+  populateSubjects(subjects, 'puc', key);
+  showLoading(false);
     // subjectsData from last assignment likely refers to one of the sets (PUC or last)
     // We'll attach PUC explicitly if exists
     if (window.subjectsData["PUC-I-1"] || window.subjectsData["PUC-I-2"]) {
@@ -53,7 +54,8 @@ const pucOptions = document.getElementById('pucOptions');
 const btechOptions = document.getElementById('btechOptions');
 const pucYear = document.getElementById('pucYear');
 const pucSem = document.getElementById('pucSem');
-const branchSelect = document.getElementById('branchSelect');
+  populateSubjects(subjects, branch, key);
+  showLoading(false);
 const yearSelect = document.getElementById('yearSelect');
 const btechSem = document.getElementById('btechSem');
 const loadSubjectsBtn = document.getElementById('loadSubjectsBtn');
@@ -231,7 +233,13 @@ function populateSubjects(subjects, branch, key) {
   }
 
   // subject rows
-  subjects.forEach((s, idx) => {
+    subjects.forEach((s, idx) => {
+      // Remove heavy animation for mobile
+      if (isMobileDevice()) {
+        row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-${branch}`;
+      } else {
+        row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-pop card-${branch}`;
+      }
     const row = document.createElement('div');
     row.className = `grid grid-cols-12 gap-2 items-center p-3 rounded-xl border border-transparent shadow card-pop card-${branch}`;
     row.innerHTML = `
