@@ -44,6 +44,47 @@ function buildSubjectsMap() {
   return map;
 }
 const subjectsMap = buildSubjectsMap();
+// If Modify button exists in HTML at load, give it label
+document.addEventListener('DOMContentLoaded', () => {
+  const modifyBtn = document.getElementById('modifyBtn');
+  if (modifyBtn && !modifyBtn.innerHTML.includes('Modify Subjects')) {
+    modifyBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
+        viewBox="0 0 20 20" fill="currentColor">
+        <path d="M4 13V7h4l4-4v14l-4-4H4z"/>
+      </svg> 
+      <span>Modify Subjects</span>
+    `;
+  }
+  wrapButtons();
+});
+
+// If Modify button is created dynamically in code:
+function createModifyButton() {
+  const modifyBtn = document.createElement('button');
+  modifyBtn.id = 'modifyBtn';
+  modifyBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
+      viewBox="0 0 20 20" fill="currentColor">
+      <path d="M4 13V7h4l4-4v14l-4-4H4z"/>
+    </svg> 
+    <span>Modify Subjects</span>
+  `;
+  return modifyBtn;
+}
+
+// Wrap Modify and Calculate buttons in a .button-row
+function wrapButtons() {
+  const calcBtn = document.getElementById('calcBtn');
+  const modifyBtn = document.getElementById('modifyBtn');
+  if (calcBtn && modifyBtn && !calcBtn.parentElement.classList.contains('button-row')) {
+    const row = document.createElement('div');
+    row.className = 'button-row';
+    calcBtn.parentNode.insertBefore(row, calcBtn);
+    row.appendChild(modifyBtn);
+    row.appendChild(calcBtn);
+  }
+}
 
 /* -------------------------
    DOM refs

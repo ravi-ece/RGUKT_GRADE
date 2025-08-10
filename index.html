@@ -19,10 +19,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <style>
-      /* Mobile: use exact desktop gradient colors for header background */
       
-      }
-  /* ...existing code... */
 
 @media (max-width: 600px) {
   header {
@@ -658,6 +655,42 @@ document.getElementById('calcBtn')?.addEventListener('click', () => {
   showToast('SGPA calculated successfully!');
 });
 </script>
+<style>
 
+    /* ...your existing styles... */
+
+    /* Remove header from mobile white background override */
+    @media (max-width: 600px) {
+      .bg-white\/70, .dark\:bg-slate-900\/70 {
+        background: #fff !important;
+      }
+    }
+
+    /* Blue gradient for mobile header */
+    @media (max-width: 600px) {
+      header {
+        background: linear-gradient(120deg, #dbeafe 0%, #60a5fa 100%) !important;
+        box-shadow: none !important;
+      }
+    }
+
+    /* Prevent overlap between Modify and Calculate buttons */
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .button-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #calcBtn, #modifyBtn, #loadSubjectsBtn {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
 </body>
 </html>
