@@ -45,9 +45,22 @@
           max-width: 98vw !important;
           box-sizing: border-box !important;
         }
-        .card-pop {
-          animation-duration: 0.2s !important;
-        }
+          .card-pop,
+          .fade-in,
+          .pop,
+          .cse-bg, .ece-bg, .eee-bg, .civil-bg, .mech-bg, .mme-bg, .chem-bg, .puc-bg,
+          html.dark .cse-bg,
+          html.dark .ece-bg,
+          html.dark .eee-bg,
+          html.dark .civil-bg,
+          html.dark .mech-bg,
+          html.dark .mme-bg,
+          html.dark .chem-bg,
+          html.dark .puc-bg {
+            animation-duration: 0s !important;
+            transition-duration: 0s !important;
+            animation-delay: 0s !important;
+          }
       }
     /* Extra small animations */
     .fade-in { animation: fadeIn .4s ease both; }
