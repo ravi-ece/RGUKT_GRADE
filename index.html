@@ -19,6 +19,36 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <style>
+      /* Mobile responsive fixes for subjects section and cards */
+      @media (max-width: 600px) {
+        #subjectsSection {
+          padding: 10px !important;
+          border-radius: 1.2rem !important;
+          min-width: 0 !important;
+          width: 100vw !important;
+          max-width: 100vw !important;
+          overflow-x: auto !important;
+        }
+        #subjectsContainer {
+          padding: 0 !important;
+          margin: 0 !important;
+          width: 100vw !important;
+          max-width: 100vw !important;
+          overflow-x: auto !important;
+        }
+        .card-cse, .card-ece, .card-eee, .card-civil, .card-mech, .card-mme, .card-chem, .card-puc, .card-default {
+          font-size: 1rem !important;
+          padding: 10px !important;
+          margin-bottom: 10px !important;
+          min-width: 0 !important;
+          width: 98vw !important;
+          max-width: 98vw !important;
+          box-sizing: border-box !important;
+        }
+        .card-pop {
+          animation-duration: 0.2s !important;
+        }
+      }
     /* Extra small animations */
     .fade-in { animation: fadeIn .4s ease both; }
     @keyframes fadeIn { from{opacity:0; transform: translateY(6px)} to{opacity:1; transform:none} }
