@@ -19,6 +19,37 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
   <style>
+      /* Completely disable header/background animations and ensure logo is always visible on mobile */
+      @media (max-width: 600px) {
+        .animate-fade-in,
+        .animate-fade-in-up,
+        .animate-gradientMove,
+        .animate-float {
+          animation: none !important;
+          transition: none !important;
+        }
+        header,
+        .bg-white\/70, .dark\:bg-slate-900\/70 {
+          position: static !important;
+          box-shadow: none !important;
+          background: #fff !important;
+        }
+        img[alt="RGUKT Logo"] {
+          display: block !important;
+          width: 100px !important;
+          max-width: 100px !important;
+          height: 100px !important;
+          margin: 0 auto !important;
+          position: static !important;
+          z-index: 10 !important;
+          background: #fff !important;
+          border-radius: 50% !important;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .fixed.inset-0 {
+          display: none !important;
+        }
+      }
       /* Ensure logo is always visible and properly sized on mobile */
       @media (max-width: 600px) {
         img[alt="RGUKT Logo"] {

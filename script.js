@@ -351,11 +351,9 @@ downloadBtn.addEventListener('click', async () => {
   const subjectsEl = document.getElementById('subjectsSection');
   if (!subjectsEl) return alert('Nothing to download.');
 
-  // Prompt for student name and ID
-  let studentName = prompt('Enter your name for the report:');
-  if (!studentName) return alert('Name is required.');
-  let studentId = prompt('Enter your ID number for the report:');
-  if (!studentId) return alert('ID number is required.');
+  // Use default/blank values for student name and ID
+  let studentName = '';
+  let studentId = '';
 
   // small validation: ensure SGPA calculated
   if (!sgpaDisplay.textContent) {
@@ -409,18 +407,7 @@ downloadBtn.addEventListener('click', async () => {
   y += 18;
 
   // Student info row
-  pdf.setFont('times', 'bold');
-  pdf.setFontSize(13);
-  pdf.text(`ID: ${studentId}`, 60, y);
-  pdf.text(`NAME: ${studentName}`, pageWidth-220, y);
-  let branch = document.getElementById('branchSelect')?.value?.toUpperCase() || 'PUC';
-  let year = document.getElementById('yearSelect')?.value || '';
-  let sem = document.getElementById('btechSem')?.value || '';
-  let yearSem = year && sem ? `YEAR: E${year} SEM${sem}` : '';
-  pdf.setFont('times', 'bold');
-  pdf.text(`BRANCH: ${branch}`, 60, y+18);
-  pdf.text(yearSem, pageWidth-220, y+18);
-  y += 38;
+    // Removed student info row (name and ID) from PDF
 
   // Table columns: SNO, SUBCODE, SUBNAME, CREDITS, GRADES
   const colX = [60, 120, 210, 430, 510];
@@ -445,19 +432,18 @@ downloadBtn.addEventListener('click', async () => {
     const credits = row.querySelector('.font-semibold')?.textContent || '';
     const grade = row.querySelector('.gradeSelect')?.value || '';
     pdf.setFillColor(255,255,255);
-    pdf.rect(colX[0], y, colW.reduce((a,b)=>a+b), 22, 'S');
-    pdf.text(String(idx+1), colX[0]+18, y+15, { align: 'center' });
-    pdf.text(code, colX[1]+30, y+15, { align: 'center' });
-  // Wrap subject name if too long
-  let wrappedName = pdf.splitTextToSize(name, colW[2]-20);
-  pdf.text(wrappedName, colX[2]+10, y+15, { maxWidth: colW[2]-20 });
-  y += (22 * wrappedName.length) - 22;
-    pdf.text(credits, colX[3]+30, y+15, { align: 'center' });
-    pdf.text(grade, colX[4]+30, y+15, { align: 'center' });
-    y += 22;
-    if (y > pdf.internal.pageSize.getHeight()-80) {
-      pdf.addPage();
-      y = 60;
+      let wrappedName = pdf.splitTextToSize(name, colW[2]-20);
+      let rowHeight = 22 * wrappedName.length;
+      pdf.rect(colX[0], y, colW.reduce((a,b)=>a+b), rowHeight, 'S');
+      pdf.text(String(idx+1), colX[0]+18, y+15, { align: 'center' });
+      pdf.text(code, colX[1]+30, y+15, { align: 'center' });
+      pdf.text(wrappedName, colX[2]+10, y+15, { maxWidth: colW[2]-20 });
+      pdf.text(credits, colX[3]+30, y+15, { align: 'center' });
+      pdf.text(grade, colX[4]+30, y+15, { align: 'center' });
+      y += rowHeight;
+      if (y > pdf.internal.pageSize.getHeight()-80) {
+        pdf.addPage();
+        y = 60;
     }
   });
 
