@@ -495,16 +495,16 @@ downloadBtn.addEventListener('click', async () => {
   pdf.setFont('times', 'normal');
   pdf.setFontSize(13);
   pdf.text('Controller of Examinations', pageWidth/2, y+30, { align: 'center' });
-// Make college name clickable in UI
-document.addEventListener('DOMContentLoaded', () => {
-  const collegeNameEl = document.getElementById('collegeName');
-  if (collegeNameEl) {
-    collegeNameEl.style.cursor = 'pointer';
-    collegeNameEl.addEventListener('click', () => {
-      window.open('https://rguktong.ac.in/', '_blank');
-    });
-  }
-});
+  // Make college name clickable in UI
+  document.addEventListener('DOMContentLoaded', () => {
+    const collegeNameEl = document.getElementById('collegeName');
+    if (collegeNameEl) {
+      collegeNameEl.style.cursor = 'pointer';
+      collegeNameEl.addEventListener('click', () => {
+        window.open('https://rguktong.ac.in/', '_blank');
+      });
+    }
+  });
 
   pdf.setProperties({ title: 'SGPA Report' });
   const name = `SGPA_Report_${new Date().toISOString().slice(0,10)}.pdf`;
@@ -553,7 +553,7 @@ function showModifyModal(subjects, branch) {
   removedSubjects = new Set();
   // Populate remove list
   removeSubjectsList.innerHTML = '';
-  subjects.forEach((sub, idx) => {
+  currentSubjects.forEach((sub, idx) => {
     const div = document.createElement('div');
     div.innerHTML = `<label><input type="checkbox" data-idx="${idx}" /> ${sub.name} <span class='text-xs text-gray-500'>(${sub.subcode})</span></label>`;
     removeSubjectsList.appendChild(div);
@@ -571,7 +571,7 @@ modifyBtn?.addEventListener('click', () => {
       name: row.querySelector('.font-medium')?.textContent || '',
       subcode: row.querySelector('.text-xs')?.textContent || '',
       credits: row.querySelector('.font-semibold')?.textContent || '',
-      grade: row.querySelector('.gradeSelect')?.value || ''
+      grade: row.querySelector('.gradeSelect')?.value || 'EX'
     };
   });
   showModifyModal(subjects, branch);
@@ -587,7 +587,7 @@ addSubjectForm?.addEventListener('submit', (e) => {
   const subcode = document.getElementById('newSubjectCode').value.trim();
   const credits = document.getElementById('newSubjectCredits').value.trim();
   if (!name || !subcode || !credits) return;
-  currentSubjects.push({ name, subcode, credits, grade: '' });
+  currentSubjects.push({ name, subcode, credits, grade: 'EX' });
   showModifyModal(currentSubjects, branchSelect?.value || 'puc');
 });
 
@@ -611,15 +611,14 @@ saveSubjectsBtn?.addEventListener('click', () => {
       <div class="font-medium col-span-2">${sub.name}</div>
       <div class="text-xs">${sub.subcode}</div>
       <div class="font-semibold">${sub.credits}</div>
-      <select class="gradeSelect rounded-lg border p-1">
-        <option value="">--</option>
-        <option value="EX">EX</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-        <option value="E">E</option>
-        <option value="F">F</option>
+      <select class="gradeSelect rounded-lg border p-1" style="background:#fff;z-index:10;">
+        <option value="EX" ${sub.grade==="EX"?"selected":""}>EX</option>
+        <option value="A" ${sub.grade==="A"?"selected":""}>A</option>
+        <option value="B" ${sub.grade==="B"?"selected":""}>B</option>
+        <option value="C" ${sub.grade==="C"?"selected":""}>C</option>
+        <option value="D" ${sub.grade==="D"?"selected":""}>D</option>
+        <option value="E" ${sub.grade==="E"?"selected":""}>E</option>
+        <option value="F" ${sub.grade==="F"?"selected":""}>F</option>
       </select>
     `;
     subjectsContainer.appendChild(div);
