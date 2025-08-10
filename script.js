@@ -611,7 +611,7 @@ saveSubjectsBtn?.addEventListener('click', () => {
       <div class="font-medium col-span-2">${sub.name}</div>
       <div class="text-xs">${sub.subcode}</div>
       <div class="font-semibold">${sub.credits}</div>
-      <select class="gradeSelect rounded-lg border p-1" style="background:#fff;z-index:10;">
+      <select class="gradeSelect rounded-lg border p-1 bg-white text-gray-900 border-gray-400" style="z-index:10;">
         <option value="EX" ${sub.grade==="EX"?"selected":""}>EX</option>
         <option value="A" ${sub.grade==="A"?"selected":""}>A</option>
         <option value="B" ${sub.grade==="B"?"selected":""}>B</option>
