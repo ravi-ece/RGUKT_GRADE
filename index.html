@@ -377,9 +377,15 @@
   <button id="modifySubjectsBtn" class="fixed bottom-8 left-8 z-50 p-5 rounded-full bg-gradient-to-br from-blue-500 to-blue-400 text-white shadow-2xl hover:scale-110 transition-transform text-2xl font-bold flex items-center gap-2 animate-fade-in-up" style="min-width:56px;min-height:56px;justify-content:center;align-items:center;" title="Modify Subjects">
       <style>
         @media (max-width: 600px) {
+          #modifySubjectsBtn,
+          #fabDownload {
+            bottom: 32px !important; /* both buttons use same bottom spacing */
+          }
           #modifySubjectsBtn {
-            bottom: 80px !important; /* move up so it doesn't overlap with Calculate SGPA */
             left: 16px !important;
+          }
+          #fabDownload {
+            right: 16px !important;
           }
         }
       </style>
